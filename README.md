@@ -2,8 +2,21 @@
 
 [demo](http://s.baku89.com/fuse/)
 
+## Development Environment
 
-## memo
+You simply have to exec `npm install` and run `gulp` to develop.
+
+### Build Tool
+
+- gulp
+- webpack
+- glslify
+
+### Front-end library
+
+- THREE.js
+
+## Memo
 
 - __coord__: display coordinates
 - __pos__: cell coordinates

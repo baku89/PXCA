@@ -3,27 +3,20 @@ import Config from './config.js'
 
 export default class Brush {
 
-	constructor() {
-
-		this.type = 'fuse'
-
-		this.data = {
-			fuse: {name: 'Fuse',   color: '#d5d7bf', index: 2 * 0xff, size: Config.PC ? 3.0 : 1.5},
-			bomb: {name: 'Bomb',   color: '#dad95c', index: 3 * 0xff, size: Config.PC ? 3.0 : 1.5},
-			fire: {name: 'Fire',   color: '#f52661', index: 4 * 0xff, size: Config.PC ? 2.0 : 1.5},
-			wall: {name: 'Wall',   color: '#272e38', index: 1 * 0xff, size: Config.PC ? 3.0 : 3.0},
-			ersr: {name: 'Eraser', color: '#61686E', index: 0 * 0xff, size: Config.PC ? 5.0 : 5.0}
-		}
-
-		this.$palette = $('.palette')
+	init(system) {
+		console.log(system)
+		this.data = system.brushData
+		this.paletteOrder = system.paletteOrder
 
 		this.initPalette()
-
+		this.changeType('fuse')
 	}
 
 	initPalette() {
 
-		Object.keys(this.data).forEach((key) => {
+		let $palette = $('.palette')
+
+		this.paletteOrder.forEach((key) => {
 			let brush = this.data[key]
 			let $brush = $('<button></button>')
 
@@ -31,31 +24,23 @@ export default class Brush {
 				.addClass('brush')
 				.css('background-color', brush.color)
 				.attr('data-type', key)
-				.on('click', () => this.changeBrush(key))
+				.on('click', () => this.changeType(key))
 
-			if (this.type == key) {
-				$brush.addClass('is-active')
-			}
-
-			this.$palette.append($brush)
+			$palette.append($brush)
 		})
 
 		this.$brushes = $('.brush')
-
+		
 	}
 
-	changeBrush(type) {
+	changeType(type) {
 		this.type = type
+		this.size = this.data[this.type].size
+		this.index = this.data[this.type].index
+		this.size2 = this.size * this.size
+
 		this.$brushes.removeClass('is-active')
 		this.$brushes.filter(`[data-type=${this.type}]`).addClass('is-active')
-	}
-
-	get size() {
-		return this.data[this.type].size
-	}
-
-	get index() {
-		return this.data[this.type].index
 	}
 
 

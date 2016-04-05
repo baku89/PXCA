@@ -22,14 +22,20 @@ module.exports = {
 			},
 			{
 				test: /\.jade$/,
-				loader: 'jade-loader'
+				loader: 'jade'
 			},
 			{
 				test: /\.styl$/,
 				loader: 'style!css!stylus'
 			},
-			{test: /\.(vert|frag|glsl)$/, loaders:['raw-loader','glslify-loader']}
+			{
+				test: /\.(vert|frag|glsl)$/,
+				loader: 'raw!glslify'
+			}
 		]
+	},
+	glslify: {
+		use: [require('glslify-import')]
 	},
 	stylus: {
 		use: [require('nib')()]
