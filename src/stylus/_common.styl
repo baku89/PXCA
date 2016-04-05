@@ -1,0 +1,19 @@
+@import 'nib'
+
+//--------------------------------------------------
+mobile()
+	// @media only screen and (max-width: 960px)
+	@media only screen and (max-width: 760px)
+		{block}
+		
+landscape()
+	@media only screen and (max-device-width: 1024px) and (orientation: landscape)
+		{block}
+
+status(s)
+	body[data-status={s}] &
+		{block}
+
+// variables
+custom-bezier = cubic-bezier(0.37, 0, 0.11, 1)
+c-text = #d1d8db

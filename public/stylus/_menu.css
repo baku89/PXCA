@@ -1,0 +1,108 @@
+.menu {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 15;
+}
+@media only screen and (max-width: 760px) {
+  .menu {
+    height: 100%;
+  }
+}
+.menu__btn {
+  visibility: hidden;
+  position: absolute;
+  display: block;
+  top: 5px;
+  left: -53px;
+  width: 48px;
+  height: 48px;
+  border: none;
+  background-color: transparent !important;
+}
+@media only screen and (max-width: 760px) {
+  .menu__btn {
+    visibility: visible;
+  }
+}
+.menu__btn .l {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 32px;
+  height: 4px;
+  margin-top: -2px;
+  margin-left: -16px;
+  border-radius: 2px;
+  background-color: #d1d8db;
+  -webkit-transition: -webkit-transform 0.5s cubic-bezier(0.37, 0, 0.11, 1);
+  transition: -webkit-transform 0.5s cubic-bezier(0.37, 0, 0.11, 1);
+  transition: transform 0.5s cubic-bezier(0.37, 0, 0.11, 1);
+  transition: transform 0.5s cubic-bezier(0.37, 0, 0.11, 1), -webkit-transform 0.5s cubic-bezier(0.37, 0, 0.11, 1);
+}
+.menu__btn .l1 {
+  -webkit-transform: translate(0, -9px);
+  transform: translate(0, -9px);
+}
+body[data-status=menu] .menu__btn .l1 {
+  -webkit-transform: translate(0, 0) rotate(-135deg);
+  transform: translate(0, 0) rotate(-135deg);
+}
+body[data-status=menu] .menu__btn .l2 {
+  -webkit-transform: scale(0.4, 0);
+  transform: scale(0.4, 0);
+}
+.menu__btn .l3 {
+  -webkit-transform: translate(0, 9px);
+  transform: translate(0, 9px);
+}
+body[data-status=menu] .menu__btn .l3 {
+  -webkit-transform: translate(0, 0) rotate(135deg);
+  transform: translate(0, 0) rotate(135deg);
+}
+@media only screen and (max-width: 760px) {
+  .menu__lists {
+    width: 0;
+    height: 100%;
+    overflow: hidden;
+    background: #2a2f33;
+    -webkit-transition: width 0.3s cubic-bezier(0.37, 0, 0.11, 1);
+    transition: width 0.3s cubic-bezier(0.37, 0, 0.11, 1);
+  }
+  body[data-status=menu] .menu__lists {
+    width: 90px;
+  }
+}
+.menu__lists li {
+  float: right;
+  margin-right: 15px;
+  line-height: 60px;
+  font-size: 16px;
+}
+@media only screen and (max-width: 760px) {
+  .menu__lists li {
+    float: none;
+    width: 90px;
+    text-align: center;
+  }
+}
+.menu__lists .menu__help {
+  padding-left: 7px;
+  padding-right: 7px;
+}
+.layer--menu-darken {
+  visibility: hidden;
+}
+/*
+.layer--menu-darken 
+	z-index 12
+	visibility hidden
+	opacity 0
+	transition opacity 0.2s ease, visibility 0s linear 0.5s
+	
+	+status(menu)
+		visibility visible
+		opacity 1
+		transition opacity 0.2s ease, visibility 0s linear 0s
+		
+*/

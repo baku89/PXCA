@@ -1,0 +1,50 @@
+@require "./_common.styl"
+
+.palette
+	position: absolute
+	top: 11px
+	left: 50%
+	width: 240px
+	height: 0
+	margin: 0 0 0 -120px
+	z-index: 10
+
+	+mobile()
+		top: 6px
+
+	+landscape()
+		top: 50%
+		left: 11px
+		width: 0
+		height: 240px
+		margin: -120px 0 0 0
+
+.brush
+	position: relative
+	float: left
+	width: 36px
+	height: 36px
+	margin: 6px
+	border: 0 solid white
+	border-radius: 18px
+	text-indent: -9999px
+	overflow: hidden
+	transform: scale(0.8)
+	transition: all 0.13s custom-bezier
+
+	&:hover 
+		transform: scale(0.85)
+
+	&:hover:before 
+		content: '\00a0'
+		display: block
+		position: absolute
+		width: 100%
+		height: 100%
+		top: 0
+		left: 0
+		background: rgba(255, 255, 255, 0.3)
+
+	&.is-active 
+		border-width: 2px
+		transform: scale(1)
