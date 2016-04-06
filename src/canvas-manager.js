@@ -68,32 +68,62 @@ export default class CanvasManager {
 		let pixels = new Uint8Array(w * h * 4)
 		this.pingping.readPixels(x, y, w, h, pixels)
 
-		// check
-		{
-			let filled = false
+		// 1. check
+		let filled = false
 
-			for (let i = 0, len = w * h; i < len; i++) {
-				if (pixels[i*4] || pixels[i*4+1] || pixels[i*4+2]) {
-					filled = true
-					break
+		for (let i = 0, len = w * h; i < len; i++) {
+			if (pixels[i*4] || pixels[i*4+1] || pixels[i*4+2]) {
+				filled = true
+				break
+			}
+		}
+
+		if (!filled) {
+			this.share.failed('Please draw something.')
+			return
+		}
+
+		// 2. encode canvas to base64
+		let map64 = Base64Util.convertArray(pixels, w, h)
+
+		// re-draw without cursor highlight
+		this.filterPass.brushSize2 = -1
+		this.filterPass.render(this.filteredTex)
+		this.filteredTex.readPixels(x, y, w, h, pixels)
+
+		let thumb64 = Base64Util.convertArray(pixels, w, h)
+
+		// 3. create data
+		let data = {
+			
+		}
+
+		$.ajax({
+			type: 'POST',
+			url: '/api/post.php',
+			data: {
+				type: this.system.type,
+				map: map64,
+				thumb: thumb64
+				parent: null
+			},
+
+			success: (data) => {
+				let json = null
+				try {
+					json = JSON.parse(data)
+				} catch(e) {
+					console.error('CanvasManager: JSON parse error')
 				}
+
+				if (!json || json.status == 'failed') {
+					return
+				}
+
+				this.share.succeed('')
 			}
 
-			if (!filled) {
-				this.share.failed('Please draw something.')
-				return
-			}
-		}
-
-		// encode canvas to base64
-		{
-			let map64 = Base64Util.convertArray(pixels, w, h)
-
-			// re-draw without cursor highlight
-			this.filterPass.uniforms.
-
-		}
-
+		})
 
 	}
 
@@ -103,6 +133,8 @@ export default class CanvasManager {
 	}
 
 	initSystem(system) {
+
+		this.system = system
 
 		this.brush.init(system)
 
