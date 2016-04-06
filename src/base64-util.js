@@ -1,5 +1,5 @@
 
-export default class Base64Util {
+class Base64Util {
 
 	constructor() {
 		this.canvas = document.createElement('canvas')
@@ -31,6 +31,4 @@ export default class Base64Util {
 	}
 }
 
-
-
-
+export default new Base64Util()

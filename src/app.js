@@ -25,31 +25,30 @@ class App {
 
 		ticker(window, 50).on('tick', this.draw.bind(this))
 
-		state.onleavedraw = () => this.isPause = true
-		state.onenterdraw = () => this.isPause = false
+		state.onleavedraw = () => this.isPaused = true
+		state.onenterdraw = () => this.isPaused = false
 
 		// routing
-		let id = (function() {
-			let result = new RegExp(/^\?n=([0-9]+)$/).exec(location.search)
-			if (result) return result[1]
-			else null
-		})()
+		let id = parseInt( $('body').data('id') )
 
 		if (id) {
-			// this.canvasManager.loadMap(id)
-			state.assetsLoaded()
+			let mapUrl = $('body').data('map')
+
+			this.canvasManager.loadMap(mapUrl).then(() => {
+				state.mapLoaded()
+			})
 
 		} else {
-			state.assetsLoaded()
+			state.resume()
+
 		}
 
 	}
 
 	draw() {
-		if (!this.isPause) 
+		if (!this.isPaused) 
 			this.canvasManager.render()
 	}
-
 }
 
 window.app = new App()

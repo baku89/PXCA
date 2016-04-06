@@ -21,6 +21,7 @@
 		"jQuery": true,
 		"$": true,
 		"THREE": true,
-		"_": true
+		"_": true,
+		"TWEEN": true
 	}
 }

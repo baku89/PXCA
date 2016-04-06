@@ -46,9 +46,9 @@ gulp.task('babel', () => {
 
 //==================================================
 gulp.task('jade', () => {
-	return gulp.src('./src/**/*.jade')
+	return gulp.src('./src/*.jade')
 		.pipe($.plumber())
-		.pipe($.jade({pretty: developmentMode}))
+		.pipe($.jadePhp({pretty: developmentMode}))
 		.pipe(gulp.dest('public'))
 		.pipe(browserSync.stream())
 })
@@ -77,7 +77,7 @@ gulp.task('browser-sync', () => {
 gulp.task('watch', () => {
 	gulp.watch('./src/index.js', ['babel'])
 	gulp.watch('./src/**/*.styl', ['stylus'])
-	gulp.watch('./src/**/*.jade', ['jade'])
+	gulp.watch(['./src/**/*.jade', './src/jade/*'], ['jade'])
 })
 
 //==================================================

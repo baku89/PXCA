@@ -12,18 +12,16 @@ header('Access-Control-Allow-Origin: *');
 
 
 // const
-define('SITEROOT', 'http://s.baku89.com/fuse/');
+define('SITEROOT', 			$isRemote ? 'http://s.baku89.com/fuse' : 'http://localhost:3000');
 
-define('ERROR_JSON', '{"status": "failed"}');
+define('ERROR_JSON', 		'{"status": "failed"}');
 
-define('DATA_DIR', $isRemote ? '/fuse/data/' : '/data/');
+define('HOST', 					$isRemote ? 'mysql901.xserver.jp' : 'localhost');
+define('USER', 					'suyarigasumi_mg');
+define('PASSWORD', 			'Byakugunh4b2');
+define('DATABASE', 			'suyarigasumi_fuse2');
 
-define('HOST', $isRemote ? 'mysql901.xserver.jp' : 'localhost');
-define('USER', 'suyarigasumi_mg');
-define('PASSWORD', 'Byakugunh4b2');
-define('DATABASE', 'suyarigasumi_fuse');
-
-define('SHARE_WIDTH', 240);
-define('SHARE_HEIGHT', 160);
+define('SHARE_WIDTH', 	240);
+define('SHARE_HEIGHT',	160);
 
 ?>

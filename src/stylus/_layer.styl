@@ -1,0 +1,127 @@
+@import "./_common"
+
+//--------------------------------------------------
+// help
+
+.layer--help,
+.layer--gallery 
+	top: -100%
+	overflow scroll
+	transition: transform 0.5s custom-bezier
+
+
+.layer--help
+	+status('help')
+		transform: translate(0, 100%)
+
+.layer--help__container
+	position absolute
+	top 50%
+	left 50%
+	width 600px
+	height 500px
+	max-width 100%
+	max-height 100%
+	margin-top -250px
+	margin-left -300px
+	
+	+mobile()
+		position: static
+		padding: 20px 10px
+		margin: 0 auto
+
+
+.layer--help__container h2,
+.layer--help__container h3 
+	text-align: center
+	margin-bottom: 20px
+
+.layer--help__container h2:before,
+.layer--help__container h2:after 
+	content: " ---------- "
+	letter-spacing: .2em
+
+.layer--help__container p 
+	margin-bottom: 20px
+
+.layer--help__shortcut
+	+mobile()
+		display none
+
+.layer--help__shortcut--left 
+	float: left
+	width: 35%
+	margin-left: 15%
+
+.layer--help__shortcut--right 
+	float: left
+	width: 40%
+
+.layer--help__credit 
+	clear: both
+	text-align: right
+	font-size: 14px
+	
+//--------------------------------------------------
+// paused
+
+.layer--paused
+	visibility: hidden
+	opacity: 0
+	transition: opacity 0.2s ease, visibility 0s linear 0.5s
+
+	+status('paused')
+		visibility: visible
+		opacity: 1
+		transition: opacity 0.2s ease, visibility 0s linear 0s
+
+	.layer__container 
+		overflow: hidden
+
+.layer--paused__message 
+	position: absolute
+	top: 50%
+	left: 50%
+	width: 200px
+	height: 30px
+	margin-left: -100px
+	margin-top: -15px
+	text-align: center
+	
+
+//--------------------------------------------------
+// share
+
+.layer--share 
+	background-color: transparent
+	overflow: hidden
+	visibility: hidden
+
+	+status('share')
+		visibility: visible
+
+.share-frame 
+	position: absolute
+	width: 100%
+	height: 100%
+	background-color: #2a2f33
+	transition: all 0.5s custom-bezier
+
+.share-frame--top 
+	bottom: 100%
+.share-frame--bottom 
+	top: 100%
+.share-frame--left 
+	right: 100%
+.share-frame--right 
+	left: 100%
+
+.layer--share__loading 
+	visibility: hidden
+	position: absolute
+	top: 50%
+	left: 50%
+	margin: 140px 0 0 -5px
+
+.layer--share[status=loading] .layer--share__loading 
+	visibility: visible

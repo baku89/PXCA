@@ -2,6 +2,8 @@ import Config from './config.js'
 
 const DEFOCUS_POS = -100
 
+const BUTTON_RIGHT = 2
+
 export default class Cursor {
 
 	constructor($canvas) {
@@ -20,6 +22,7 @@ export default class Cursor {
 			'mousedown': (e) => {
 				this.isDraw = true
 				this.updateCoord(e.clientX, e.clientY, true)
+				
 			},
 
 			'mousemove': (e) => {

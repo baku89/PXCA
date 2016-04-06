@@ -22,7 +22,7 @@ module.exports = {
 			},
 			{
 				test: /\.jade$/,
-				loader: 'jade'
+				loader: 'jade-loader'
 			},
 			{
 				test: /\.styl$/,
@@ -51,7 +51,7 @@ module.exports = {
 			THREE: 'three',
 			jQuery: 'jquery',
 			$: 'jquery',
-			_: 'lodash'
+			TWEEN: 'tween'
 		})
 	]
 };

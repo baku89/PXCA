@@ -1,12 +1,13 @@
+#pragma glslify: distanceSquared = require(../../shaders/distance-squared.glsl)
+
+//---------------------------------------------
+
 uniform sampler2D buffer;
 uniform vec2 resolution;
-
-uniform vec4 shareRect;
-// (x, y, z, w) = (left, top, right, bottom)
-
+uniform vec4 shareRect; // (left, top, right, bottom)
 uniform vec2 curtPos;
-uniform int brushType;
 uniform float brushSize2;
+uniform float outerOpacity;
 
 varying vec2 vUv;
 
@@ -34,7 +35,8 @@ const vec3 COLOR_BOMB		= vec3(0.855, 0.851, 0.361);
 const vec3 COLOR_FIRE_BIRTH = vec3(0.933, 0.568, 0.129);
 const vec3 COLOR_FIRE_DEATH	= vec3(0.960, 0.149, 0.380);
 
-const float OPACITY_SHARE = 0.96;
+const vec3 BRUSH_HIGHLIHGT = vec3(0.1);
+const vec3 OUTER_COLOR = vec3(0.164, 0.184, 0.2);
 
 //---------------------------------------------
 // functions
@@ -77,15 +79,15 @@ void main() {
 	}
 
 	// cursor
-	// if ( cell.a < 1.0 ) {
-	// 	cell.rgb += vec3( 0.1, 0.1, 0.1 );
-	// }
+	if (distanceSquared(pos, curtPos) < brushSize2) {
+		color += BRUSH_HIGHLIHGT;
+	}
 
 	// range
-	// if ( !( shareRect.x <= pos.x && pos.x <= shareRect.z &&
-	// 		shareRect.y <= pos.y && pos.y <= shareRect.w ) ) {
-	// 	cell.rgb *= OPACITY_SHARE;
-	// }
+	if ( !(shareRect.x <= pos.x && pos.x <= shareRect.z &&
+			shareRect.y <= pos.y && pos.y <= shareRect.w) ) {
+		color = mix(OUTER_COLOR, color, outerOpacity);
+	}
 	
-	gl_FragColor = vec4( color, 1.0 );
+	gl_FragColor = vec4(color, 1.0);
 }

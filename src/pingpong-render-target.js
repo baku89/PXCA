@@ -37,6 +37,14 @@ export default class PingpongRenderTarget {
 		if (croppedTex) this.src.resetByTexture(croppedTex)
 	}
 
+	readPixels(x, y, w, h, pixels) {
+		renderer.readRenderTargetPixels(this.dst, x, y, w, h, pixels)
+	}
+
+	resetByTexture(texture) {
+		this.src.resetByTexture(texture)
+	}
+
 	swap() {
 		[this.src, this.dst] = [this.dst, this.src]
 	}

@@ -15,6 +15,10 @@ export default class Navigation extends EventEmitter {
 			state.showHelp()
 		})
 
+		$('.menu__share').on('click', () => {
+			state.showShare()
+		})
+
 		$('.layer').on('click', () => {
 			state.resume()
 		})
