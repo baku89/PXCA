@@ -4,7 +4,7 @@ import Config from './config.js'
 export default class Brush {
 
 	init(system) {
-		console.log(system)
+		
 		this.data = system.brushData
 		this.paletteOrder = system.paletteOrder
 

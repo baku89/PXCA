@@ -121,65 +121,11 @@ body[data-status=loading] .canvas--loading
 	height: 100%
 	background-color: rgba(42, 47, 51, 0.8)
 	z-index: 20
-	
+
 @import "stylus/_brush.styl"
 @import "stylus/_menu.styl"
 
-
-.layer--help,
-.layer--gallery 
-	top: -100%
-	transition: transform 0.5s custom-bezier
-
-	&.is-visible
-		transform: translate(0, 100%)
-
-.layer--help__container 
-	position: absolute
-	top: 50%
-	left: 50%
-	width: 600px
-	height: 500px
-	max-width: 100%
-	max-height: 100%
-	margin-top: -250px
-	margin-left: -300px
-
-.layer--help__container h2,
-.layer--help__container h3 
-	text-align: center
-	margin-bottom: 20px
-
-.layer--help__container h2:before,
-.layer--help__container h2:after 
-	content: " ---------- "
-	letter-spacing: .2em
-
-.layer--help__container p 
-	margin-bottom: 20px
-
-.layer--help__shortcut--left 
-	float: left
-	width: 35%
-	margin-left: 15%
-
-.layer--help__shortcut--right 
-	float: left
-	width: 40%
-
-.layer--help__credit 
-	clear: both
-	text-align: right
-	font-size: 14px
-
-@media only screen and (max-width: 960px) 
-	.layer--help__container 
-		position: static
-		padding: 20px 10px
-		margin: 0 auto
-	
-	.layer--help__shortcut 
-		display: none
+@import "stylus/_help.styl"
 	
 
 .layer--pause 

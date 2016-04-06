@@ -1,0 +1,26 @@
+import EventEmitter from 'eventemitter3'
+
+let state = window.state
+
+export default class Navigation extends EventEmitter {
+
+	constructor() {
+		super()
+
+		$('.menu__clear').on('click', () => {
+			this.emit('clear')
+		})
+
+		$('.menu__help').on('click', () => {
+			state.showHelp()
+		})
+
+		$('.layer').on('click', () => {
+			state.resume()
+		})
+
+	}
+
+
+
+}

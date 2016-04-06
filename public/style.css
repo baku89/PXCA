@@ -213,7 +213,7 @@ body[data-status=loading] .canvas--loading {
   background-color: rgba(42,47,51,0.8);
   z-index: 20;
 }
-.palette {
+.palette-wrapper {
   position: absolute;
   top: 11px;
   left: 50%;
@@ -221,20 +221,27 @@ body[data-status=loading] .canvas--loading {
   height: 0;
   margin: 0 0 0 -120px;
   z-index: 10;
+  text-align: center;
 }
 @media only screen and (max-width: 760px) {
-  .palette {
+  .palette-wrapper {
     top: 6px;
   }
 }
 @media only screen and (max-device-width: 1024px) and (orientation: landscape) {
-  .palette {
+  .palette-wrapper {
     top: 50%;
     left: 11px;
     width: 0;
     height: 240px;
     margin: -120px 0 0 0;
   }
+}
+.palette {
+  display: inline-block;
+}
+.palette-arrow {
+  display: inline-block;
 }
 .brush {
   position: relative;
@@ -273,7 +280,7 @@ body[data-status=loading] .canvas--loading {
 .menu {
   position: absolute;
   top: 0;
-  right: 0;
+  right: 10px;
   z-index: 15;
 }
 @media only screen and (max-width: 760px) {
@@ -347,9 +354,9 @@ body[data-status=menu] .menu__btn .l3 {
 }
 .menu__lists li {
   float: right;
-  margin-right: 15px;
-  line-height: 60px;
-  font-size: 16px;
+  margin-right: 13px;
+  line-height: 70px;
+  font-size: 14px;
 }
 @media only screen and (max-width: 760px) {
   .menu__lists li {
@@ -368,13 +375,13 @@ body[data-status=menu] .menu__btn .l3 {
 .layer--help,
 .layer--gallery {
   top: -100%;
+  overflow: scroll;
   -webkit-transition: -webkit-transform 0.5s cubic-bezier(0.37, 0, 0.11, 1);
   transition: -webkit-transform 0.5s cubic-bezier(0.37, 0, 0.11, 1);
   transition: transform 0.5s cubic-bezier(0.37, 0, 0.11, 1);
   transition: transform 0.5s cubic-bezier(0.37, 0, 0.11, 1), -webkit-transform 0.5s cubic-bezier(0.37, 0, 0.11, 1);
 }
-.layer--help.is-visible,
-.layer--gallery.is-visible {
+body[data-status=help] .layer--help {
   -webkit-transform: translate(0, 100%);
   transform: translate(0, 100%);
 }
@@ -389,6 +396,13 @@ body[data-status=menu] .menu__btn .l3 {
   margin-top: -250px;
   margin-left: -300px;
 }
+@media only screen and (max-width: 760px) {
+  .layer--help__container {
+    position: static;
+    padding: 20px 10px;
+    margin: 0 auto;
+  }
+}
 .layer--help__container h2,
 .layer--help__container h3 {
   text-align: center;
@@ -401,6 +415,11 @@ body[data-status=menu] .menu__btn .l3 {
 }
 .layer--help__container p {
   margin-bottom: 20px;
+}
+@media only screen and (max-width: 760px) {
+  .layer--help__shortcut {
+    display: none;
+  }
 }
 .layer--help__shortcut--left {
   float: left;
@@ -415,16 +434,6 @@ body[data-status=menu] .menu__btn .l3 {
   clear: both;
   text-align: right;
   font-size: 14px;
-}
-@media only screen and (max-width: 960px) {
-  .layer--help__container {
-    position: static;
-    padding: 20px 10px;
-    margin: 0 auto;
-  }
-  .layer--help__shortcut {
-    display: none;
-  }
 }
 .layer--pause {
   visibility: hidden;

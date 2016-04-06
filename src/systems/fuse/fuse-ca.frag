@@ -41,6 +41,8 @@ const Cell CELL_BOMB = Cell(BOMB,	0,		0.0);
 const Cell CELL_FIRE = Cell(FIRE,	0,	255.0);
 const Cell CELL_XPLD = Cell(XPLD,	0,		0.0);
 
+const float FIRE_FALLOFF = 8.0;
+
 //---------------------------------------------
 // functions
 
@@ -110,7 +112,7 @@ void main() {
 		
 		// fill brush
 		if (brushType == FUSE) 			c = CELL_FUSE;
-		else if (brushType == FIRE) c = generateFire(0, 8.0, 16.0);
+		else if (brushType == FIRE) c = generateFire(0, 64.0, 128.0);
 		else if (brushType == BOMB)	c = CELL_BOMB;
 		else if (brushType == BLNK) c = CELL_BLNK;
 		else if (brushType == WALL) c = CELL_WALL;
@@ -130,15 +132,15 @@ void main() {
 			dir += receiveFire( dx, -dy, 128);
 
 			// spark
-			if (dir > 0) c = generateFire(dir, 1.0, 2.0);
+			if (dir > 0) c = generateFire(dir, 8.0, 16.0);
 
 		} else if (c.type == FUSE) {
 
-			if (willBurned()) c = generateFire(0, 16.0, 32.0);
+			if (willBurned()) c = generateFire(0, 128.0, 256.0);
 
 		} else if (c.type == FIRE) {
 
-			c.life -= 1.0;
+			c.life -= FIRE_FALLOFF;
 			if (c.life <= 0.0) c = CELL_BLNK;
 		
 		} else if (c.type == BOMB) {

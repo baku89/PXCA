@@ -4,7 +4,7 @@ export default class BasePass {
 
 		this.scene = new THREE.Scene()
 
-		this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 1, 1000)
+		this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 1, 10)
 		this.camera.position.set(0, 0, 10)
 		this.scene.add(this.camera)
 

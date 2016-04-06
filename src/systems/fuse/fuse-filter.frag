@@ -31,8 +31,8 @@ const vec3 COLOR_WALL1	= vec3(0.153, 0.18, 0.22);
 const vec3 COLOR_WALL2	= vec3(0.196, 0.224, 0.259);
 const vec3 COLOR_FUSE		= vec3(0.835, 0.843, 0.749);
 const vec3 COLOR_BOMB		= vec3(0.855, 0.851, 0.361);
-const vec3 COLOR_FIRE_DEATH	= vec3(0.933, 0.569, 0.129);
-const vec3 COLOR_FIRE_BIRTH	= vec3(0.961, 0.149, 0.38);
+const vec3 COLOR_FIRE_BIRTH = vec3(0.933, 0.568, 0.129);
+const vec3 COLOR_FIRE_DEATH	= vec3(0.960, 0.149, 0.380);
 
 const float OPACITY_SHARE = 0.96;
 
@@ -73,7 +73,7 @@ void main() {
 	
 	} else {
 		// fire
-		color = mix(COLOR_FIRE_DEATH, COLOR_FIRE_BIRTH, cell.life / 8.0);
+		color = mix(COLOR_FIRE_DEATH, COLOR_FIRE_BIRTH, cell.life / 255.0);
 	}
 
 	// cursor

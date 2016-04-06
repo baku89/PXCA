@@ -81,7 +81,12 @@ function gotoBlankPage() {
 
 		<div class="loading canvas--loading"></div>
 
-		<div class="palette">
+		<div class="palette-wrapper">
+
+			<button class="palette-arrow prev"></button>
+			<div class="palette"></div>
+			<button class="palette-arrow next"></button>
+
 		</div>
 
 		<nav class="menu">
@@ -92,6 +97,7 @@ function gotoBlankPage() {
 				<div class="l l3"></div>
 			</a>
 
+
 			<ul class="menu__lists">
 				<li><a class="menu__help">?</a></li>
 				<li><a class="menu__gallery">Gallery</a></li>
@@ -99,6 +105,7 @@ function gotoBlankPage() {
 				<li><a class="menu__clear">Clear</a></li>
 			</ul>
 		</nav>
+
 		<div class="layer layer--menu-darken"><!-- --></div>
 
 		<div class="layer layer--help">
@@ -183,7 +190,7 @@ function gotoBlankPage() {
 	</div>
 
 	<!-- JS -->
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/stats.js/r11/Stats.js"></script>
+	<!-- <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/stats.js/r11/Stats.js"></script> -->
 	
 	<script type="text/javascript" src="./js/Detector.js"></script>
 	<script type="text/javascript" src="./js/main.js"></script>

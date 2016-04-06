@@ -1,4 +1,4 @@
-.palette {
+.palette-wrapper {
   position: absolute;
   top: 11px;
   left: 50%;
@@ -6,20 +6,27 @@
   height: 0;
   margin: 0 0 0 -120px;
   z-index: 10;
+  text-align: center;
 }
 @media only screen and (max-width: 760px) {
-  .palette {
+  .palette-wrapper {
     top: 6px;
   }
 }
 @media only screen and (max-device-width: 1024px) and (orientation: landscape) {
-  .palette {
+  .palette-wrapper {
     top: 50%;
     left: 11px;
     width: 0;
     height: 240px;
     margin: -120px 0 0 0;
   }
+}
+.palette {
+  display: inline-block;
+}
+.palette-arrow {
+  display: inline-block;
 }
 .brush {
   position: relative;

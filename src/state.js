@@ -3,14 +3,15 @@ import StateMachine from 'javascript-state-machine'
 let $body = $('body')
 
 window.state = StateMachine.create({
-	initial: 'drawing',
+	initial: 'loading',
 	events: [
+		{name: 'assetsLoaded',from: 'loading', to: 'draw'},
+		{name: 'pause',				from: 'draw',	to: 'paused'},
 		{name: 'expandMenu', 	from: 'draw', to: 'menu'},
 		{name: 'foldMenu',   	from: 'menu', to: 'draw'},
 		{name: 'showGallery', from: ['draw', 'menu'], to: 'gallery'},
-		{name: 'hideGallery', from: 'gallery', to: 'draw'},
 		{name: 'showHelp',		from: ['draw', 'menu'], to: 'help'},
-		{name: 'hideHelp',		from: 'help', to: 'draw'}
+		{name: 'resume',			from: ['paused', 'gallery', 'help'], to: 'draw'}
 	],
 	callbacks: {
 		onenterstate: (evt, from, to) => {

@@ -1,3 +1,7 @@
+import CARenderTarget from './ca-render-target.js'
+
+let renderer = window.renderer
+
 export default class PingpongRenderTarget {
 
 	constructor(w, h) {
@@ -9,22 +13,44 @@ export default class PingpongRenderTarget {
 
 	setSize(w, h) {
 
-		console.log('pingpno')
+		if (this.width == w && this.height == h) return
 
-		if (this.src) this.src.dispose()
-		if (this.dst) this.dst.dispose()
+		let croppedTex = null
 
-		let params = {
-			minFilter: THREE.NearestFilter,
-			magFilter: THREE.NearestFilter,
-			format: THREE.RGBAFormat
+		if (this.src) {
+			let ox = Math.floor( (this.width - w) / 2 )
+			let oy = Math.floor( (this.height - h) / 2 )
+			let pixels = new Uint8Array(w * h * 4)
+			renderer.readRenderTargetPixels(this.src, ox, oy, w, h, pixels)
+			croppedTex = new THREE.DataTexture(pixels, w, h)
 		}
 
-		this.src = new THREE.WebGLRenderTarget(w, h, params)
-		this.dst = new THREE.WebGLRenderTarget(w, h, params) 
+
+		if (!this.src) this.src = new CARenderTarget(w, h)
+		if (!this.dst) this.dst = new CARenderTarget(w, h)
+
+		this.src.setSize(w, h)
+		this.dst.setSize(w, h)
+		this.width = w
+		this.height = h
+
+		if (croppedTex) this.src.resetByTexture(croppedTex)
 	}
 
 	swap() {
 		[this.src, this.dst] = [this.dst, this.src]
 	}
+
+	clear() {
+		this.src.dispose()
+		this.dst.dispose()
+		this.src = new CARenderTarget(this.width, this.height)
+		this.dst = new CARenderTarget(this.width, this.height)
+	}
+
+
+	// trim
+
+
+
 }

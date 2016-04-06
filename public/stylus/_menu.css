@@ -1,7 +1,7 @@
 .menu {
   position: absolute;
   top: 0;
-  right: 0;
+  right: 10px;
   z-index: 15;
 }
 @media only screen and (max-width: 760px) {
@@ -75,9 +75,9 @@ body[data-status=menu] .menu__btn .l3 {
 }
 .menu__lists li {
   float: right;
-  margin-right: 15px;
-  line-height: 60px;
-  font-size: 16px;
+  margin-right: 13px;
+  line-height: 70px;
+  font-size: 14px;
 }
 @media only screen and (max-width: 760px) {
   .menu__lists li {

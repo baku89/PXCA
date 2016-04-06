@@ -1,11 +1,12 @@
+import 'jquery.throttledresize.js'
 
 import './global-renderer.js'
 import Config from './config.js'
 import BasePass from './base-pass.js'
 import PingpongRenderTarget from './pingpong-render-target.js'
+import CARenderTarget from './ca-render-target.js'
 import Brush from './brush.js'
 import Cursor from './cursor.js'
-
 
 
 const renderer = window.renderer
@@ -20,7 +21,21 @@ export default class CanvasManager {
 		this.brush = new Brush()
 		this.pingpong = new PingpongRenderTarget()
 
-		$(window).on('resize', this.onResize.bind(this))
+		this.renderPass = new BasePass({
+			fragmentShader: require('./shaders/passthru.frag'),
+			uniforms: {
+				buffer: {type: 't', value: null}
+			}
+		})
+
+		// event
+		$(window).on('throttledresize', this.onResize.bind(this))
+
+		this.clear = this.clear.bind(this)
+	}
+
+	clear() {
+		this.pingpong.clear()
 	}
 
 	initSystem(system) {
@@ -76,6 +91,10 @@ export default class CanvasManager {
 
 		this.pingpong.setSize(w, h)
 
+		if (this.filteredTex) this.filteredTex.dispose()
+		this.filteredTex = new CARenderTarget(w, h)
+		this.renderPass.uniforms.buffer.value = this.filteredTex
+
 		{
 			let x = Math.floor((w - Config.SHARE_WIDTH) / 2)
 			let y = Math.floor((h - Config.SHARE_HEIGHT) / 2)
@@ -94,13 +113,14 @@ export default class CanvasManager {
 
 		this.caPass.render(this.pingpong.dst)
 
-		/// 2. render to main canvas
+		/// 2. filter
 		this.filterPass.uniforms.buffer.value = this.pingpong.dst
-		this.filterPass.render()
+		this.filterPass.render(this.filteredTex)
 
+		// 3. render to main canvas
+		this.renderPass.render()
 
 		this.pingpong.swap()
-
 	}
 
 
