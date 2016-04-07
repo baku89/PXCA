@@ -1,5 +1,7 @@
 @import "./_common"
 
+$alert-bg = #2a2f33
+
 .alert 
 	position: absolute
 	top: 50%
@@ -7,7 +9,6 @@
 	width: 380px
 	height: 0px
 	margin: 100px 0 0 -190px
-	background-color: #2a2f33
 	overflow: hidden
 	transition: height 0.5s custom-bezier
 
@@ -20,13 +21,14 @@
 
 
 .alert__content 
+	background-color $alert-bg
 	height: 75px
-	border-bottom: 2px solid #474d52
-
-.alert__choises 
-	position: relative
+	margin-bottom 2px
+	
+.alert__choices
+	position relative
+	display flex
 	height: 45px
-	*zoom: 1
 
 	&:after 
 		content: ""
@@ -35,44 +37,47 @@
 
 .alert__btn 
 	display: block
-	float: left
-	width: 50%
+	flex-grow 1
 	height: 100%
-	background-color: transparent
-	font-size: 18px
+	background-color $alert-bg
+	font-size: 16px
 	color: c-text
-	border-right: 2px solid #474d52
+	margin-right 2px
+	cursor pointer
 
 	&:last-child 
-		border: 0
+		margin 0
+		
 
-.layer--share[status=complete] .alert__wrapper--complete 
-	display: block
+//-----------------------------------
+// failed
 
-.alert--complete__url-wrapper 
-	position: absolute
-	top: 20px
-	right: 70px
-	left: 20px
-
-.alert--complete__url 
-	width: 100%
-
-.alert--complete__tweet 
-	position: absolute
-	top: 22px
-	right: 15px
-	font-size: 14px
-
-.layer--share[status=failed] .alert__wrapper--failed 
-	display: block
-
-.alert__wrapper--failed .alert__content 
+.alert--failed__content
 	text-align: center
 	line-height: 75px
 
-.alert__wrapper--failed .alert__btn 
-	width: 100%
+//-----------------------------------
+// succeed
+
+.alert--succeed__content
+	display flex
+	align-items center
+
+.alert__share-url
+	flex-grow 2
+	margin-left 20px
+	
+	
+.alert__tweet
+	flex-basis 40px	
+	margin-left 20px
+	margin-right 20px
+
+.alert__tweet-link
+	font-size 14px
+
+
+
 
 .layer--gallery 
 	overflow: scroll

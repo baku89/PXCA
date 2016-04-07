@@ -1,3 +1,4 @@
+import StateMachine from 'javascript-state-machine'
 import Config from './config.js'
 
 const state = window.state
@@ -6,34 +7,53 @@ const OUTER_OPACITY = {
 	draw: 0.93,
 	preview: 0.5,
 	share: 0,
-	step: 0.04
+	frames: 10
 }
 
-export default class ShareUI {
+export default class Share {
 
 	constructor() {
-
-		tihs.$alert = $('.alert')
 
 		$('.menu__share').on({
 			'mouseenter': () => {
 				this.setOuterOpacity(OUTER_OPACITY.preview)	
 			},
 			'mouseleave': () => {
-				this.setOuterOpacity(OUTER_OPACITY.draw)
+				if (state.current != 'share')
+					this.setOuterOpacity(OUTER_OPACITY.draw)
 			}
 		})
 
 
-		state.onentershare = () => {
+		state.onposting = (s) => {
 			this.setOuterOpacity(OUTER_OPACITY.share)
-			this.postMap()
-
 		}
+
+		state.onshowShare = this.onShowShare.bind(this)
 
 		state.onleaveshare = () => {
-			this.setOuterOpacity(OUTER_OPACITY.draw)
+			this.alert.$data.show = false
+			this.setOuterOpacity(OUTER_OPACITY.draw)	
+
+			setTimeout(() => state.transition(), 550)
+			
+			return StateMachine.ASYNC
 		}
+
+		this.alert = new Vue({
+			el: '.alert',
+			data: {
+				show: false,
+				result: '',
+				message: '',
+				url: ''
+			},
+			methods: {
+				resume() { state.resume() },
+				showGallery() { state.showGallery() }
+			}
+		})
+
 	}
 
 	get rect() {
@@ -52,14 +72,16 @@ export default class ShareUI {
 		this.uniforms.shareRect.value.set(x, y, x + Config.SHARE_WIDTH, y + Config.SHARE_HEIGHT)
 	}
 
-
 	setOuterOpacity(target) {
 
-		let step = this.uniforms.outerOpacity.value <= target
-			? OUTER_OPACITY.step
-			: OUTER_OPACITY.step * -1
+		let current = this.uniforms.outerOpacity.value
+		let step = Math.abs(target - current) / OUTER_OPACITY.frames
 
-		let isEnd = this.uniforms.outerOpacity.value <= target
+		if (target < current) {
+			step *= -1
+		}
+
+		let isEnd = current <= target
 			? function(current, target) {return target <= current}
 			: function(current, target) {return current <= target}
 
@@ -76,7 +98,53 @@ export default class ShareUI {
 
 			this.uniforms.outerOpacity.value = value
 
-		}, 40)
+		}, 20)
+
+	}
+
+	onShowShare(event, from, to, result, data) {
+
+		console.log('aa')
+
+		console.log(this)
+
+		if (result == 'failed') {
+			this.alert.$data.message = data.message
+
+		} else if (result == 'succeed') {
+			this.alert.$data.url = data.url
+
+		}
+
+		this.alert.$data.result = result
+		this.alert.$data.show = true
+
+		console.log(this.alert.$data)
+	}
+
+	openTweetIntent(data) {
+		let windowOptions = 'scrollbars=yes,resizable=yes,toolbar=no,location=yes',
+			width = 550,
+			height = 420,
+			winHeight = screen.height,
+			winWidth = screen.width
+
+		let left = Math.round((winWidth / 2) - (width / 2))
+		let top = 0
+
+		if (winHeight > height) {
+			top = Math.round((winHeight / 2) - (height / 2))
+		}
+
+		let params = {
+			url: data.url,
+			text: `Fuse #${data.id}`
+		}
+
+		let intentUrl = `https://twitter.com/intent/tweet?${$.param(params)}`
+
+		window.open(intentUrl, 'intent', 
+			`${windowOptions},width=${width},height=${height},left=${left},top=${top}`)
 	}
 
 

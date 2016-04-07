@@ -1,44 +1,77 @@
 import Config from './config.js'
-
-const DEFOCUS_POS = -100
+import EventEmitter from 'eventemitter3'
+import Mobile from './mobile.js'
 
 const BUTTON_RIGHT = 2
 
-export default class Cursor {
+const router = window.router
+
+const Mode = {
+	NONE: 0,
+	DRAW: 1,
+	SIZING: 2
+}
+
+
+
+export default class Cursor extends EventEmitter {
 
 	constructor($canvas) {
-
+		super()
 		// public
-		this.curtPos = new THREE.Vector2(DEFOCUS_POS, DEFOCUS_POS)
-		this.prevPos = new THREE.Vector2(DEFOCUS_POS, DEFOCUS_POS)  
+		this.curtPos = new THREE.Vector2()
+		this.prevPos = new THREE.Vector2()
 
 		// private
 		this.$canvas = $canvas
-		this.coord = new THREE.Vector2(DEFOCUS_POS, DEFOCUS_POS)
-		this.isDraw = false
+		this.coord = new THREE.Vector2()
+		this.mode = Mode.NONE
+		// this.mode = Mode.none
+
+		this.isPortrait = Mobile.getOrientation() == 'portrait'
+
+		Mobile.on('orientationchange', (orientation) => {
+			this.isPortrait = orientation == 'portrait'
+		})
 
 		this.$canvas.on({
 
 			'mousedown': (e) => {
-				this.isDraw = true
-				this.updateCoord(e.clientX, e.clientY, true)
+				if (e.button == 2) {
+					this.mode = Mode.SIZING
+					this.sx = e.clientX / Config.CELL_WIDTH
+					this.sy = e.clientY / Config.CELL_WIDTH
+					
+				} else {
+					this.mode = Mode.DRAW
+					this.updateCoord(e.clientX, e.clientY, true)
+				}
 				
 			},
 
 			'mousemove': (e) => {
-				if (this.isDraw) {
+				if (this.mode == Mode.SIZING) {
+					let x = e.clientX / Config.CELL_WIDTH,
+						y = e.clientY / Config.CELL_WIDTH
+
+					let size = Math.pow(this.sx - x, 2) + Math.pow(this.sy - y, 2)
+					size = Math.round(Math.sqrt(size))
+
+					this.emit('size-changed', size)
+
+				} else {
 					this.updateCoord(e.clientX, e.clientY)
 				}
 			},
 
 			'mouseup mouseleave': (e) => {
-				this.isDraw = false
-				this.updateCoord(DEFOCUS_POS, DEFOCUS_POS, true)
+				this.mode = Mode.NONE
 			},
 
 			// mobile
 			'touchstart': (e) => {
 				e.preventDefault()
+				this.mode = Mode.DRAW
 				this.updateCoord(
 					e.originalEvent.touches[0].pageX,
 					e.originalEvent.touches[0].pageY,
@@ -54,25 +87,26 @@ export default class Cursor {
 
 			'touchend': (e) => {
 				e.preventDefault()
-				console.log('touchend')
-				this.updateCoord(DEFOCUS_POS, DEFOCUS_POS, true)
+				this.mode = Mode.NONE
 			}
 		})
 
 	}
 
 	updateCoord(x, y, reset) {
-		this.coord.set(x, y)
-		if (reset !== undefined) {
-			this.curtPos.set(x / Config.CELL_WIDTH, y / Config.CELL_WIDTH)
+		if (this.isPortrait) {
+			this.coord.set(y / Config.CELL_WIDTH, (window.innerWidth - x) / Config.CELL_WIDTH)
+		} else {
+			this.coord.set(x / Config.CELL_WIDTH, y / Config.CELL_WIDTH)
 		}
+
+		if (reset !== undefined)
+			this.curtPos.copy(this.coord)
 	}
 
 	update() {
-		
+		// console.log(this.curtPos.x, this.curtPos.y)
 		this.prevPos.copy(this.curtPos)
-		this.curtPos.set(
-			Math.round(this.coord.x / Config.CELL_WIDTH),
-			Math.round(this.coord.y / Config.CELL_WIDTH))
+		this.curtPos.copy(this.coord)
 	}
 }

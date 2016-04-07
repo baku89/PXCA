@@ -22,6 +22,7 @@
 		"$": true,
 		"THREE": true,
 		"_": true,
-		"TWEEN": true
+		"TWEEN": true,
+		"Vue": true
 	}
 }

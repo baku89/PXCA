@@ -14,6 +14,8 @@ $url = SITEROOT;
 $map_url = '';
 $thumb_url = SITEROOT . "/img/ogp.jpg";
 
+$type = 1;
+
 //------------------------------------------------------------
 // check specified post exists in DB
 
@@ -31,13 +33,14 @@ if ( isset($_GET['n']) ) {
 	$col = $result->fetch_assoc();
 
 	$id 		= $col['id'];
+	$type 	= $col['type'];
 	$map 		= $col['map'];
 	$thumb 	= $col['thumb'];
 
 	$title			= "Fuse #${id}";
 	$url 				= SITEROOT . "/?n=${id}";
-	$map_url		= SITEROOT . "/data/${map}";
-	$thumb_url	= SITEROOT . "/data/${thumb}";
+	$map_url		= DATA_URL . "/${map}";
+	$thumb_url	= DATA_URL . "/${thumb}";
 
 }
 
@@ -78,13 +81,14 @@ function gotoBlankPage() {
     ga('send', 'pageview');
   </script>
 </head>
-<body data-id="<?= is_null($id) ? "" : $id ?>" data-map="<?= $map_url ?>">
+<body>
   <div class="page-wrapper">
-    <canvas id="canvas"></canvas>
-    <div class="loading canvas--loading"></div>
-    <div class="palette-wrapper">
-      <div class="palette"></div>
-    </div>
+    <canvas id="canvas" class="is-hidden">
+      <div class="test">UncoUnco</div>
+    </canvas>
+    <div class="loading"></div>
+    <div class="palette"></div>
+    <div class="layer layer--menu-darken"></div>
     <nav class="menu">
       <div class="menu__btn">
         <div class="l l1"></div>
@@ -92,73 +96,76 @@ function gotoBlankPage() {
         <div class="l l3"></div>
       </div>
       <ul class="menu__lists">
-        <li><a class="menu__help">?</a></li>
-        <li><a class="menu__gallery">Gallery</a></li>
-        <li><a class="menu__share">Share</a></li>
         <li><a class="menu__clear">Clear</a></li>
+        <li><a class="menu__share">Share</a></li>
+        <li><a class="menu__gallery">Gallery</a></li>
+        <li><a class="menu__help">?</a></li>
       </ul>
     </nav>
-    <div class="layer layer--menu-darken"></div>
-    <section class="layer layer--help">
-      <div class="layer--help__container">
+    <section class="help layer layer--help">
+      <div class="help__container">
         <h2>Fuse</h2>
         <p>
           This demo simulates burning fuses and exploding bombs using a method of a sort of cellular automaton(CA). Click and drag to draw a line. Select parettes on top to change brush type(<span class="fuse">fuse</span>, <span class="bomb">bomb</span>, <span class="fire">fire</span>, <span class="wall">wall</span>, <span class="ersr">eraser</span> respectively from left to right). The CA program is mainly written in GLSL.
           
         </p>
-        <h3 class="layer--help__shortcut">Shortcuts</h3>
-        <p class="layer--help__shortcut layer--help__shortcut--left">
-          [1]: <span class="fuse">Fuse</span><br>
-          [2]: <span class="bomb">Bomb</span><br>
-          [3]: <span class="fire">Fire</span><br>
-          [4]: <span class="wall">Wall</span><br>
-          [5]: <span class="ersr">Eraser</span>
-          
-        </p>
-        <p class="layer--help__shortcut layer--help__shortcut--right">
+        <h3 class="help__shortcut">Shortcuts</h3>
+        <p class="help__shortcut-list">
+          [1-5]: Change <span class="fuse">B</span><span class="bomb">r</span><span class="fire">u</span><span class="wall">s</span><span class="ersr">h</span><br>
+          [↑↓ or right drag]: Change brush size<br>
+          [space]: Toggle pause<br>
+          [c]: Clear<br>
           [s]: Share<br>
-          [↑]: Increasing brush size<br>
-          [↓]: Decreasing brush size<br>
-          [space]: Toggle pause
-          
+          [g]: Gallery<br>
         </p>
-        <p class="layer--help__credit">
+        <p class="help__credit">
           created by <a href="http://baku89.com" target="_blank">baku</a>
           
           
         </p>
       </div>
     </section>
-    <section class="layer layer--paused">
-      <div class="layer--paused__message">&gt; Click to Resume &lt;</div>
+    <section class="paused layer layer--paused">
+      <div class="paused__message">&gt; Click to Resume &lt;</div>
     </section>
-    <section class="layer layer--share">
-      <div class="is-passthru share-frame share-frame--top"></div>
-      <div class="is-passthru share-frame share-frame--right"></div>
-      <div class="is-passthru share-frame share-frame--bottom"></div>
-      <div class="is-passthru share-frame share-frame--left"></div>
-      <div class="loading layer--share__loading"></div>
+    <section class="share layer layer--share">
+      <div v-bind:class="{'show': show}" class="alert">
+        <div v-show="result == 'succeed'" class="alert__wrapper--succeed">
+          <div class="alert__content alert--succeed__content">
+            <input type="text" value="{{url}}" class="alert__share-url">
+            <div class="alert__tweet"><a class="alert__tweet-link">Tweet</a></div>
+          </div>
+          <div class="alert__choices">
+            <button v-on:click.stop="showGallery()" class="alert__btn">See Others..</button>
+            <button v-on:click="resume()" class="alert__btn">Resume</button>
+          </div>
+        </div>
+        <div v-show="result == 'failed'" class="alert__wrapper--failed">
+          <div class="alert__content alert--failed__content">{{message}}</div>
+          <div class="alert__choices">
+            <button v-on:click="resume()" class="alert__btn">Resume</button>
+          </div>
+        </div>
+      </div>
     </section>
-    <div class="alert">
-    </div>
-    <section class="layer layer--gallery">
-      <ul class="layer--gallery__list is-passthru"></ul>
-      <div class="loading layer--gallery__loading"></div>
+    <section v-infinite-scroll="loadMore()" infinite-scroll-disabled="busy" infinite-scroll-distance="10" class="gallery layer layer--gallery">
+      <ul class="gallery__list">
+        <li v-for="item in items" v-on:click.stop="loadMap($event, item)" class="gallery-item">
+          <div class="gallery-item__wrapper">
+            <div class="gallery-item__id">{{item.id}}</div><img v-bind:src="item.thumb" src="" class="gallery-item__thumb">
+          </div>
+        </li>
+      </ul>
     </section>
   </div>
-  <div class="unsupported"><img src="./img/unsupported.gif">
-    <h3>Not Supported on Your Browser</h3>
-    <p>
-      Please visit from your pc<br>
-      with a latest browser supporting WebGL.
-      
-    </p>
-    <p class="unsupported__credit">
-      created by <a href="http://baku89.com/" target="_blank">baku</a>
-      
-    </p>
-  </div>
-  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/stats.js/r11/Stats.js"></script>
-  <script type="text/javascript" src="./js/Detector.js"></script>
-  <script type="text/javascript" src="./js/main.js"></script>
+  <script type="text/javascript">
+    <? if (!is_null($id)) : ?>
+    	window.initialMap = {
+    		id: <?= $id ?>,
+    		map: '<?= $map_url ?>'
+    	}
+    <? endif ?>
+    
+  </script>
+  <script type="text/javascript" src="./bootstrap.js"></script>
 </body>

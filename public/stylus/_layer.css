@@ -1,62 +1,146 @@
+.layer {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(42,47,51,0.8);
+  z-index: 20;
+}
 .layer--help,
 .layer--gallery {
   top: -100%;
   overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+  overflow-scrolling: touch;
+  -webkit-overflow-scrolling: touch;
   -webkit-transition: -webkit-transform 0.5s cubic-bezier(0.37, 0, 0.11, 1);
   transition: -webkit-transform 0.5s cubic-bezier(0.37, 0, 0.11, 1);
   transition: transform 0.5s cubic-bezier(0.37, 0, 0.11, 1);
   transition: transform 0.5s cubic-bezier(0.37, 0, 0.11, 1), -webkit-transform 0.5s cubic-bezier(0.37, 0, 0.11, 1);
 }
-body[data-status=help] .layer--help {
-  -webkit-transform: translate(0, 100%);
-  transform: translate(0, 100%);
+body[data-status=gallery] .layer--gallery {
+  -webkit-transform: translateY(100%);
+  transform: translateY(100%);
 }
-.layer--help__container {
+.gallery__list {
+  margin-top: 40px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: box;
+  display: flex;
+  -webkit-box-lines: multiple;
+  -moz-box-lines: multiple;
+  -o-box-lines: multiple;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-box-pack: center;
+  -o-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+}
+.gallery-item {
+  position: relative;
+  width: 320px;
+  margin: 10px;
+  cursor: pointer;
+}
+.gallery-item:after {
+  content: "\00a0";
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 600px;
-  height: 500px;
-  max-width: 100%;
-  max-height: 100%;
-  margin-top: -250px;
-  margin-left: -300px;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255,255,255,0.2);
+  opacity: 0;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
+  -webkit-transition: opacity 0.1s ease;
+  transition: opacity 0.1s ease;
+}
+.gallery-item:hover:after {
+  opacity: 1;
+  -ms-filter: none;
+  -webkit-filter: none;
+          filter: none;
 }
 @media only screen and (max-width: 760px) {
-  .layer--help__container {
-    position: static;
-    padding: 20px 10px;
-    margin: 0 auto;
+  .gallery-item {
+    width: 260px;
+    margin: 6px;
   }
 }
-.layer--help__container h2,
-.layer--help__container h3 {
+.gallery-item__id {
+  position: absolute;
+  top: 0;
+  left: 10px;
+  z-index: 10;
+}
+.gallery-item__thumb {
+  position: relative;
+  width: 100%;
+  height: auto;
+  display: block;
+}
+body[data-status=help] .layer--help {
+  -webkit-transform: translateY(100%);
+  transform: translateY(100%);
+}
+.help {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: box;
+  display: flex;
+  -webkit-box-align: center;
+  -o-box-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -o-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+}
+.help__container {
+  width: 600px;
+  padding: 20px;
+  max-width: 100%;
+}
+.help__container h2,
+.help__container h3 {
   text-align: center;
   margin-bottom: 20px;
 }
-.layer--help__container h2:before,
-.layer--help__container h2:after {
+.help__container h2:before,
+.help__container h2:after {
   content: " ---------- ";
   letter-spacing: 0.2em;
 }
-.layer--help__container p {
+.help__container p {
   margin-bottom: 20px;
 }
 @media only screen and (max-width: 760px) {
-  .layer--help__shortcut {
+  .help__shortcut {
     display: none;
   }
 }
-.layer--help__shortcut--left {
-  float: left;
-  width: 35%;
-  margin-left: 15%;
+.help__shortcut-list {
+  width: 320px;
+  margin: 0 auto 20px;
 }
-.layer--help__shortcut--right {
-  float: left;
-  width: 40%;
+@media only screen and (max-width: 760px) {
+  .help__shortcut-list {
+    display: none;
+  }
 }
-.layer--help__credit {
+.help__credit {
   clear: both;
   text-align: right;
   font-size: 14px;
@@ -78,10 +162,7 @@ body[data-status=paused] .layer--paused {
   -webkit-transition: opacity 0.2s ease, visibility 0s linear 0s;
   transition: opacity 0.2s ease, visibility 0s linear 0s;
 }
-.layer--paused .layer__container {
-  overflow: hidden;
-}
-.layer--paused__message {
+.paused__message {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -97,35 +178,5 @@ body[data-status=paused] .layer--paused {
   visibility: hidden;
 }
 body[data-status=share] .layer--share {
-  visibility: visible;
-}
-.share-frame {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background-color: #2a2f33;
-  -webkit-transition: all 0.5s cubic-bezier(0.37, 0, 0.11, 1);
-  transition: all 0.5s cubic-bezier(0.37, 0, 0.11, 1);
-}
-.share-frame--top {
-  bottom: 100%;
-}
-.share-frame--bottom {
-  top: 100%;
-}
-.share-frame--left {
-  right: 100%;
-}
-.share-frame--right {
-  left: 100%;
-}
-.layer--share__loading {
-  visibility: hidden;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin: 140px 0 0 -5px;
-}
-.layer--share[status=loading] .layer--share__loading {
   visibility: visible;
 }

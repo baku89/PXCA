@@ -1,36 +1,44 @@
-.palette-wrapper {
+.palette {
   position: absolute;
   top: 11px;
-  left: 50%;
-  width: 240px;
+  left: 0;
+  right: 0;
   height: 0;
-  margin: 0 0 0 -120px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: box;
+  display: flex;
+  -webkit-box-pack: center;
+  -o-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
   z-index: 10;
-  text-align: center;
 }
 @media only screen and (max-width: 760px) {
-  .palette-wrapper {
+  .palette {
     top: 6px;
   }
 }
-@media only screen and (max-device-width: 1024px) and (orientation: landscape) {
-  .palette-wrapper {
-    top: 50%;
-    left: 11px;
-    width: 0;
-    height: 240px;
-    margin: -120px 0 0 0;
-  }
-}
-.palette {
-  display: inline-block;
-}
-.palette-arrow {
-  display: inline-block;
+body[data-orientation=landscape] .palette {
+  top: 0;
+  bottom: 0;
+  width: 0;
+  height: auto;
+  left: 11px;
+  right: auto;
+  -webkit-box-orient: vertical;
+  -o-box-orient: vertical;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -ms-flex-line-pack: center;
+  -webkit-align-content: center;
+  align-content: center;
 }
 .brush {
   position: relative;
-  float: left;
   width: 36px;
   height: 36px;
   margin: 6px;

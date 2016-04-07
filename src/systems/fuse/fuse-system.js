@@ -16,10 +16,13 @@ class FuseSystem extends CASystem {
 			fire: {name: 'Fire',   color: '#f52661', index: 128,	size: Config.PC ? 1.5 : 2.0}
 		}
 
+		this.initialBrush = 'fire'
 		this.paletteOrder = ['fuse', 'bomb', 'fire', 'wall', 'blnk']
 
 		this.caShader = require('./fuse-ca.frag')
 		this.filterShader = require('./fuse-filter.frag')
+
+		this.baseColor = 0x474d52
 
 	}
 }

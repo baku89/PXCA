@@ -68,7 +68,7 @@ gulp.task('stylus', () => {
 //==================================================
 gulp.task('browser-sync', () => {
 	browserSync.init({
-		proxy: 'localhost:8080',
+		proxy: 'localhost:8888',
 		open: false
 	})
 })

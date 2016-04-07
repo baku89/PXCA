@@ -12,7 +12,9 @@ header('Access-Control-Allow-Origin: *');
 
 
 // const
-define('SITEROOT', 			$isRemote ? 'http://s.baku89.com/fuse' : 'http://localhost:3000');
+define('SITEROOT', 			$isRemote ? 'http://s.baku89.com/fuse' : 'http://10.0.1.141:3000');
+define('DATA_DIR',			$_SERVER['DOCUMENT_ROOT'] . '/data');
+define('DATA_URL',			SITEROOT . '/data');
 
 define('ERROR_JSON', 		'{"status": "failed"}');
 

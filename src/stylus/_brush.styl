@@ -2,35 +2,31 @@
 
 
 
-.palette-wrapper
+.palette
 	position: absolute
-	top: 11px
-	left: 50%
-	width: 240px
-	height: 0
-	margin: 0 0 0 -120px
+	top 11px
+	left: 0
+	right 0
+	height 0
+	display flex
+	justify-content center
 	z-index: 10
-	text-align center
 
 	+mobile()
 		top: 6px
 
 	+landscape()
-		top: 50%
-		left: 11px
-		width: 0
-		height: 240px
-		margin: -120px 0 0 0
-
-.palette
-	display inline-block
-
-.palette-arrow
-	display inline-block
+		top 0
+		bottom 0
+		width 0
+		height auto
+		left 11px
+		right auto
+		flex-direction column
+		align-content center
 
 .brush
 	position: relative
-	float: left
 	width: 36px
 	height: 36px
 	margin: 6px

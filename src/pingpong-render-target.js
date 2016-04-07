@@ -43,6 +43,7 @@ export default class PingpongRenderTarget {
 
 	resetByTexture(texture) {
 		this.src.resetByTexture(texture)
+		this.dst.resetByTexture(texture)
 	}
 
 	swap() {

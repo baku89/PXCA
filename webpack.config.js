@@ -1,9 +1,11 @@
 let webpack = require('webpack');
 
 module.exports = {
-	entry: ['./src/app.js'],
+	entry: {
+		bootstrap: './src/bootstrap.js'
+	},
 	output: {
-		filename: 'js/main.js'
+		filename: '[name].js'
 	},
 	resolve: {
 		alias: {},
@@ -51,7 +53,7 @@ module.exports = {
 			THREE: 'three',
 			jQuery: 'jquery',
 			$: 'jquery',
-			TWEEN: 'tween'
+			Vue: 'vue'
 		})
 	]
 };

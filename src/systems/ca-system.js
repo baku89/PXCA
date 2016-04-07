@@ -9,5 +9,6 @@ export default class CASystem {
 		this.caShader = ''
 		this.filterShader = ''
 
+		this.baseColor = null
 	}
 }

@@ -9,7 +9,9 @@ export default class Brush {
 		this.paletteOrder = system.paletteOrder
 
 		this.initPalette()
-		this.changeType('fuse')
+		this.changeType(system.initialBrush)
+
+		this.changeSize = this.changeSize.bind(this)
 	}
 
 	initPalette() {
@@ -30,7 +32,20 @@ export default class Brush {
 		})
 
 		this.$brushes = $('.brush')
-		
+	}
+
+	changeSize(size) {
+		size = Math.max(0.5, size)
+		this.data[this.type].size = size
+		this.size = size
+		this.size2 = size * size
+	}
+
+	changeIndex(index) {
+		let type = this.paletteOrder[index]
+		if (type !== undefined) {
+			this.changeType(type)
+		}
 	}
 
 	changeType(type) {

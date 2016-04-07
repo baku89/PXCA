@@ -10,10 +10,16 @@ import Brush from './brush.js'
 import Cursor from './cursor.js'
 import Share from './share.js'
 import Base64Util from './base64-util.js'
+import Mobile from './mobile.js'
 
 const renderer = window.renderer
 const state = window.state
+const router = window.router
 
+const reKeyNumerical = /[1-9]/
+const isKeyNumerical = function(key) {
+	return reKeyNumerical.exec(key) != null
+}
 
 export default class CanvasManager {
 	
@@ -40,96 +46,16 @@ export default class CanvasManager {
 
 		this.clear = this.clear.bind(this)
 
-		state.onentershare = this.postMap.bind()
-	}
-
-	onKeyup(e) {
-
-		switch (e.keyCode) {
-			case 32: // Space
-				if (state.current == 'draw')
-					state.pause()
-				else if (state.current == 'paused')
-					state.resume()
-				break	
+		state.onleaveloading = () => {this.$canvas.removeClass('is-hidden')}
+		state.onloadMap = (event, from, to, map) => {
+			console.log(map)
+			this.loadMap(map)
 		}
-	}
+		state.onpostMap = this.postMap.bind(this)
 
-	postMap() {
-
-
-		let rect = this.share.rect
-
-		let x = rect.x
-		let y = rect.y
-		let w = Config.SHARE_WIDTH
-		let h = Config.SHARE_HEIGHT
-
-		let pixels = new Uint8Array(w * h * 4)
-		this.pingping.readPixels(x, y, w, h, pixels)
-
-		// 1. check
-		let filled = false
-
-		for (let i = 0, len = w * h; i < len; i++) {
-			if (pixels[i*4] || pixels[i*4+1] || pixels[i*4+2]) {
-				filled = true
-				break
-			}
-		}
-
-		if (!filled) {
-			this.share.failed('Please draw something.')
-			return
-		}
-
-		// 2. encode canvas to base64
-		let map64 = Base64Util.convertArray(pixels, w, h)
-
-		// re-draw without cursor highlight
-		this.filterPass.brushSize2 = -1
-		this.filterPass.render(this.filteredTex)
-		this.filteredTex.readPixels(x, y, w, h, pixels)
-
-		let thumb64 = Base64Util.convertArray(pixels, w, h)
-
-		// 3. create data
-		let data = {
-			
-		}
-
-		$.ajax({
-			type: 'POST',
-			url: '/api/post.php',
-			data: {
-				type: this.system.type,
-				map: map64,
-				thumb: thumb64
-				parent: null
-			},
-
-			success: (data) => {
-				let json = null
-				try {
-					json = JSON.parse(data)
-				} catch(e) {
-					console.error('CanvasManager: JSON parse error')
-				}
-
-				if (!json || json.status == 'failed') {
-					return
-				}
-
-				this.share.succeed('')
-			}
-
+		this.cursor.on('size-changed', (size) => {
+			this.brush.changeSize(size)
 		})
-
-	}
-
-
-	clear() {
-		this.pingpong.clear()
 	}
 
 	initSystem(system) {
@@ -148,6 +74,7 @@ export default class CanvasManager {
 				buffer: 		{type: 't',  value: null},
 				prevPos:  	{type: 'v2', value: this.cursor.prevPos},
 				curtPos: 		{type: 'v2', value: this.cursor.curtPos},
+				cursorMode:		{ type: 'i',	value: 0},
 
 				brushType: 		{ type: 'i', value: null},
 				brushSize2: 	{ type: 'f', value: null}
@@ -171,11 +98,59 @@ export default class CanvasManager {
 		this.onResize()
 	}
 
+	onKeyup(e) {
+
+		const key = String.fromCharCode(e.keyCode) 
+
+		switch (key) {
+			case ' ': // Space
+				if (state.current == 'draw')
+					state.pause()
+				else
+					state.resume()
+				
+				break	
+			case 'S':
+				state.postMap()
+				break
+			case 'G':
+				state.showGallery()
+				break
+			case 'C':
+				this.clear()
+				break
+			default:
+				if (e.keyCode == 38) {
+					this.brush.changeSize(this.brush.size + 1)
+				} else if (e.keyCode == 40) {
+					this.brush.changeSize(this.brush.size - 1)
+				} else if (isKeyNumerical(key)) {
+					this.brush.changeIndex(parseInt(key)-1)
+				}
+		}
+	}
+
+
+	clear() {
+		router.clear()
+		this.pingpong.clear()
+	}
+
+	
+
 	onResize() {
 		let ww = window.innerWidth
 		let wh = window.innerHeight
+		let DPR = (window.devicePixelRatio) ? window.devicePixelRatio : 1
+
+		
+		if (Mobile.getOrientation() == 'portrait') {
+			[ww, wh] = [wh, ww]
+		}
 
 		renderer.setSize(ww, wh)
+		renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1)
+
 		this.updateResolution(
 			Math.ceil(ww / Config.CELL_WIDTH),
 			Math.ceil(wh / Config.CELL_WIDTH))
@@ -197,11 +172,12 @@ export default class CanvasManager {
 		this.renderPass.uniforms.buffer.value = this.filteredTex
 
 		this.share.updateResolution(w, h)
+
+		this.render(false)
 	}
 
 	loadMap(url) {
 
-		let d = $.Deferred()
 		let map = new Image()
 
 		map.onload = () => {
@@ -219,29 +195,34 @@ export default class CanvasManager {
 			texture.magFilter = THREE.NearestFilter
 			this.pingpong.resetByTexture(texture)
 
-			d.resolve()
+			this.render(false)
+
+			state.previewMap()
 		}
 
 		map.onerror = () => {
-			d.reject()
+			router.clear()
+			state.resume()
 			console.error('CanvasManager: cannot load map')
-
 		}
 
 		map.src = url
-
-		return d.promise()
 	}
 
-	render() {
+	render(isUpdateCA) {
 
 		// 1. update CA
-		this.uniforms.buffer.value = this.pingpong.src
-		this.cursor.update()
+		if (isUpdateCA) {
+			this.uniforms.buffer.value = this.pingpong.src
+			this.cursor.update()
 
-		this.uniforms.brushType.value = this.brush.index
-		this.uniforms.brushSize2.value = this.brush.size2
-		this.caPass.render(this.pingpong.dst)
+			this.uniforms.cursorMode.value = this.cursor.mode
+			this.uniforms.brushType.value = this.brush.index
+			this.uniforms.brushSize2.value = this.brush.size2
+			this.caPass.render(this.pingpong.dst)
+
+			this.pingpong.swap()
+		}
 
 		/// 2. filter
 		this.filterPass.uniforms.buffer.value = this.pingpong.dst
@@ -250,8 +231,82 @@ export default class CanvasManager {
 
 		// 3. render to main canvas
 		this.renderPass.render()
+	}
 
-		this.pingpong.swap()
+	postMap() {
+
+		let rect = this.share.rect
+
+		let x = rect.x
+		let y = rect.y
+		let w = Config.SHARE_WIDTH
+		let h = Config.SHARE_HEIGHT
+
+		let pixels = new Uint8Array(w * h * 4)
+		this.pingpong.readPixels(x, y, w, h, pixels)
+
+		// 1. check
+		let filled = false
+
+		for (let i = 0, len = w * h; i < len; i++) {
+			if (pixels[i*4] || pixels[i*4+1] || pixels[i*4+2]) {
+				filled = true
+				break
+			}
+		}
+
+		if (!filled) {
+			state.showShare('failed', {message: 'Please draw something.'})
+			return
+		}
+
+		// 2. encode canvas to base64
+		let map64 = Base64Util.convertArray(pixels, w, h)
+
+		// re-draw without cursor highlight
+		this.filterPass.uniforms.brushSize2.value = -1
+		this.filterPass.render(this.filteredTex)
+		this.filteredTex.readPixels(x, y, w, h, pixels)
+
+		let thumb64 = Base64Util.convertArray(pixels, w, h)
+
+		// 3. create data
+		$.ajax({
+			type: 'POST',
+			url: '/api/post.php',
+			data: {
+				type: this.system.type,
+				map: map64,
+				thumb: thumb64,
+				parent_id: router.id,
+				base_color: this.system.baseColor
+			},
+
+			success: (data) => {
+				console.log(data)
+				let json = null
+				try {
+					json = JSON.parse(data)
+				} catch(e) {
+					console.error('CanvasManager: JSON parse error')
+				}
+
+				if (!json || json.status == 'failed') {
+					this.share.showAlertFailed('Sorry')
+					return
+				}
+
+				router.id = json.id
+
+				state.showShare('succeed', {
+					url: json.url,
+					id: json.id
+				})
+
+			}
+
+		})
+
 	}
 
 

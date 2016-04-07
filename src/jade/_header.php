@@ -14,6 +14,8 @@ $url = SITEROOT;
 $map_url = '';
 $thumb_url = SITEROOT . "/img/ogp.jpg";
 
+$type = 1;
+
 //------------------------------------------------------------
 // check specified post exists in DB
 
@@ -31,13 +33,14 @@ if ( isset($_GET['n']) ) {
 	$col = $result->fetch_assoc();
 
 	$id 		= $col['id'];
+	$type 	= $col['type'];
 	$map 		= $col['map'];
 	$thumb 	= $col['thumb'];
 
 	$title			= "Fuse #${id}";
 	$url 				= SITEROOT . "/?n=${id}";
-	$map_url		= SITEROOT . "/data/${map}";
-	$thumb_url	= SITEROOT . "/data/${thumb}";
+	$map_url		= DATA_URL . "/${map}";
+	$thumb_url	= DATA_URL . "/${thumb}";
 
 }
 

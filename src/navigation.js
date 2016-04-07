@@ -8,6 +8,8 @@ export default class Navigation extends EventEmitter {
 		super()
 
 		$('.menu__clear').on('click', () => {
+			if (state.current == 'menu')
+				state.resume()
 			this.emit('clear')
 		})
 
@@ -16,7 +18,11 @@ export default class Navigation extends EventEmitter {
 		})
 
 		$('.menu__share').on('click', () => {
-			state.showShare()
+			state.postMap()
+		})
+
+		$('.menu__gallery').on('click', () => {
+			state.showGallery()
 		})
 
 		$('.layer').on('click', () => {

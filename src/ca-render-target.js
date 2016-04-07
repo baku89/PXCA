@@ -19,6 +19,10 @@ export default class CARenderTarget extends THREE.WebGLRenderTarget {
 		})
 	}
 
+	readPixels(x, y, w, h, pixels) {
+		renderer.readRenderTargetPixels(this, x, y, w, h, pixels)
+	}
+
 	resetByTexture(texture) {
 		texture.needsUpdate = true
 		resetPass.uniforms.buffer.value = texture

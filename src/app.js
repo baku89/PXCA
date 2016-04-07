@@ -1,54 +1,50 @@
 import ticker from 'ticker'
 
-import './state.js'
-
+import './router.js'
 import Config from './config.js'
 import Navigation from './navigation.js'
-import MobileManager from './mobile-manager.js'
+import Mobile from './mobile.js'
 import CanvasManager from './canvas-manager.js'
+import GalleryManager from './gallery-manager.js'
 
 import FuseSystem from './systems/fuse/fuse-system.js'
+import PfwSystem from './systems/pfw/pfw-system.js'
 
 const state = window.state
+const router = window.router
 
-class App {
+export default class App {
 
 	constructor() {
 
 		this.canvasManager = new CanvasManager()
-		this.canvasManager.initSystem(FuseSystem)
+		this.canvasManager.initSystem(PfwSystem)
 
-		this.mobileManager = new MobileManager()
+		this.galleryManager = new GalleryManager()
 
 		this.navigation = new Navigation()
-		this.navigation.on('clear', this.canvasManager.clear)
+		this.navigation.on('clear', this.onClear.bind(this))
 
-		ticker(window, 50).on('tick', this.draw.bind(this))
-
-		state.onleavedraw = () => this.isPaused = true
-		state.onenterdraw = () => this.isPaused = false
-
-		// routing
-		let id = parseInt( $('body').data('id') )
-
-		if (id) {
-			let mapUrl = $('body').data('map')
-
-			this.canvasManager.loadMap(mapUrl).then(() => {
-				state.mapLoaded()
-			})
-
-		} else {
-			state.resume()
-
+		state.onenterdraw = () => {
+			this.isDraw = true
+		}
+		state.onleavedraw = () => {
+			this.isDraw = false
 		}
 
+		document.oncontextmenu = () => false
+
+		// routing
+		router.init()
+
+		ticker(window, 50).on('tick', this.draw.bind(this))
+	}
+
+	onClear() {
+		this.canvasManager.clear()
 	}
 
 	draw() {
-		if (!this.isPaused) 
-			this.canvasManager.render()
+		this.canvasManager.render(this.isDraw)
 	}
 }
-
-window.app = new App()

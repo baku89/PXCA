@@ -32,19 +32,20 @@ head
 
 	include ./jade/_ga.jade
 
-body(data-id='<?= is_null($id) ? "" : $id ?>' data-map='<?= $map_url ?>')
+body()
 
 	.page-wrapper
 
-		canvas#canvas
+		canvas#canvas.is-hidden
+			.test UncoUnco
 
-		.loading.canvas--loading
+		.loading
 
-		.palette-wrapper
-			//- button.palette-arrow.prev
-			.palette
-			//- button.palette-arrow.next
+		//- button.palette-arrow.prev
+		.palette
+		//- button.palette-arrow.next
 
+		.layer.layer--menu-darken
 		nav.menu
 			.menu__btn
 				.l.l1
@@ -52,90 +53,88 @@ body(data-id='<?= is_null($id) ? "" : $id ?>' data-map='<?= $map_url ?>')
 				.l.l3
 
 			ul.menu__lists
-				li
-					a.menu__help ?
-				li
-					a.menu__gallery Gallery
-				li
-					a.menu__share Share
-				li
-					a.menu__clear Clear
+				li: a.menu__clear Clear
+				li: a.menu__share Share
+				li: a.menu__gallery Gallery
+				li: a.menu__help ?
 
-		.layer.layer--menu-darken
+		
 
-		section.layer.layer--help
-			.layer--help__container
+		section.help.layer.layer--help
+			.help__container
 				h2 Fuse
 				
 				p.
 					This demo simulates burning fuses and exploding bombs using a method of a sort of cellular automaton(CA). Click and drag to draw a line. Select parettes on top to change brush type(<span class="fuse">fuse</span>, <span class="bomb">bomb</span>, <span class="fire">fire</span>, <span class="wall">wall</span>, <span class="ersr">eraser</span> respectively from left to right). The CA program is mainly written in GLSL.
 				
-				h3.layer--help__shortcut Shortcuts
+				h3.help__shortcut Shortcuts
 				
-				p.layer--help__shortcut.layer--help__shortcut--left.
-					[1]: <span class="fuse">Fuse</span><br>
-					[2]: <span class="bomb">Bomb</span><br>
-					[3]: <span class="fire">Fire</span><br>
-					[4]: <span class="wall">Wall</span><br>
-					[5]: <span class="ersr">Eraser</span>
-				
-				p.layer--help__shortcut.layer--help__shortcut--right.
+				p.help__shortcut-list
+					[1-5]: Change <span class="fuse">B</span><span class="bomb">r</span><span class="fire">u</span><span class="wall">s</span><span class="ersr">h</span><br>
+					[↑↓ or right drag]: Change brush size<br>
+					[space]: Toggle pause<br>
+					[c]: Clear<br>
 					[s]: Share<br>
-					[↑]: Increasing brush size<br>
-					[↓]: Decreasing brush size<br>
-					[space]: Toggle pause
+					[g]: Gallery<br>
 				
-				p.layer--help__credit.
+				p.help__credit.
 					created by <a href="http://baku89.com" target="_blank">baku</a>
 			
 
-		section.layer.layer--paused
-			.layer--paused__message &gt; Click to Resume &lt;
+		section.paused.layer.layer--paused
+			.paused__message &gt; Click to Resume &lt;
 
-		section.layer.layer--share
+		section.share.layer.layer--share
 
-			.is-passthru.share-frame.share-frame--top
-			.is-passthru.share-frame.share-frame--right
-			.is-passthru.share-frame.share-frame--bottom
-			.is-passthru.share-frame.share-frame--left
+			.alert(v-bind:class="{'show': show}")
 
-			.loading.layer--share__loading
+				.alert__wrapper--succeed(v-show="result == 'succeed'")
+					.alert__content.alert--succeed__content
+						input.alert__share-url(type="text" value="{{url}}")
+						.alert__tweet
+							a.alert__tweet-link Tweet
+					.alert__choices
+						button.alert__btn(v-on:click.stop='showGallery()') See Others..
+						button.alert__btn(v-on:click='resume()') Resume
 
-		.alert
-				
-			//- .alert__wrapper.alert__wrapper--complete
-			//- 	.alert__content
-			//- 		.alert--complete__url-wrapper
-			//- 			input.alert--complete__url(type="text" value="")
-			//- 		a.alert--complete__tweet Tweet
-				
-			//- 	.alert__choises
-			//- 		button.alert__btn.alert--url__btn--gallery See Others..
-			//- 		button.alert__btn.alert--url__btn--resume Resume
-			
-			//- .alert__wrapper.alert__wrapper--failed
-			//- 	.alert__content.alert--failed__content Failed to send data..
-			//- 	.alert__choises
-			//- 		button.alert__btn.alert--url__btn--resume Resume
+				.alert__wrapper--failed(v-show="result == 'failed'")
+					.alert__content.alert--failed__content {{message}}
+					.alert__choices
+						button.alert__btn(v-on:click='resume()') Resume
+
+
+			//- .is-passthru.share-frame.share-frame--top
+			//- .is-passthru.share-frame.share-frame--right
+			//- .is-passthru.share-frame.share-frame--bottom
+			//- .is-passthru.share-frame.share-frame--left
 					
 
-		section.layer.layer--gallery
-				ul.layer--gallery__list.is-passthru
-				.loading.layer--gallery__loading
+		section.gallery.layer.layer--gallery(
+			v-infinite-scroll='loadMore()'
+			infinite-scroll-disabled='busy'
+			infinite-scroll-distance='10')
 
-	.unsupported
-		img(src="./img/unsupported.gif")
-		h3 Not Supported on Your Browser
-		
-		p.
-			Please visit from your pc<br>
-			with a latest browser supporting WebGL.
-		
-		p.unsupported__credit.
-			created by <a href="http://baku89.com/" target="_blank">baku</a>
+			ul.gallery__list
+
+				li.gallery-item(v-for='item in items' v-on:click.stop='loadMap($event, item)')
+					.gallery-item__wrapper
+						.gallery-item__id {{item.id}}
+						img.gallery-item__thumb(v-bind:src='item.thumb' src='')
+
+			//- ul.gallery__list
+			//- ul.layer--gallery__list.is-passthru
+			//- .loading.layer--gallery__loading
+
+	
 		
 	//- JS
-	script(type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/stats.js/r11/Stats.js")
-	script(type="text/javascript" src="./js/Detector.js")
-	script(type="text/javascript" src="./js/main.js")
+	script(type="text/javascript").
+		<? if (!is_null($id)) : ?>
+			window.initialMap = {
+				id: <?= $id ?>,
+				map: '<?= $map_url ?>'
+			}
+		<? endif ?>
+		
+	script(type="text/javascript" src="./bootstrap.js")
 

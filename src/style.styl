@@ -12,6 +12,8 @@ html, body
 	width 100%
 	height 100%
 	overflow hidden
+	position: fixed
+
 
 body
 	background-color: #474d52
@@ -20,6 +22,7 @@ body
 	font-size: 18px
 	line-height: 1.8
 	user-select: none
+	top 0
 	
 	&:after
 		display none
@@ -56,17 +59,32 @@ input[type=text]
 	background-color #363c3f
 	font-family 'Ubuntu', sans-serif
 	line-height 35px
-	colo c-text
+	color c-text
 
 
 .is-hidden
 	visibilit hidden
 
-.loading 
-	widt 43px
-	height 11px
-	background-image url(../img/loading2.gif)
+
+.loading
+	position absolute
+	top 50%
+	left 50%
+	visibility hidden
+	width 80px
+	height 48px
+	margin-top -24px
+	margin-left -40px
+	background-image url(../img/loading.gif)
 	background-repeat no-repeat
+	background-size 100% 100%
+
+	
+	+status('loading')
+		visibility visible
+		
+	+status('posting')
+		visibility visible
 
 span.fuse 
 	color: #d5d7bf
@@ -93,56 +111,32 @@ span.ersr
 #canvas 
 	position: absolute
 	top: 0
-	right: 0
-	bottom: 0
 	left: 0
-	margin: auto
 	width: 100%
 	height: 100%
-	transform-origin 50% 50%
-	transform scaleY(-1.0)
+	transform-origin bottom left
+	transform translateY(-100%) scaleY(-1)
+	
+	+portrait()
+		left 100%
+		transform translateY(-100%) scaleY(-1) rotate(-90deg)
+		// transform none
+			
+		// transform translate(100%, -100%) scaleY(-1) rotate(-90deg)
+		
+	
+	&.is-hidden
+		visibility hidden
+		
 
-.canvas--loading 
-	visibility: hidden
-	position: absolute
-	top: 50%
-	left: 50%
-	z-index: 5
-
-body[data-status=loading] .canvas--loading 
-	visibility: visible
-
-.layer 
-	position: absolute
-	top: 0%
-	left: 0%
-	width: 100%
-	height: 100%
-	background-color: rgba(42, 47, 51, 0.8)
-	z-index: 20
-
+@import "stylus/_layer"
 @import "stylus/_brush"
 @import "stylus/_menu"
-@import "stylus/_layer"
 @import "stylus/_alert"
 
+@import "stylus/_gallery"
 
 
-.layer--gallery__loading 
-	visibility: hidden
-	margin: 0 auto 80px
-	line-height: 11px
-	text-align: center
-
-	.layer--gallery[data-status=nomore] &
-		visibility: visible
-		background: none
-
-	.layer--gallery[data-status=nomore] &:before 
-		content: '- - -'
-
-	.layer--gallery[data-status=loading] &
-		visibility: visible
 
 .unsupported 
 	display: none
