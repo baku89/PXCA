@@ -7,6 +7,7 @@ uniform float dx;
 uniform float dy;
 
 uniform sampler2D buffer;
+uniform float time;
 uniform vec2 resolution;
 uniform vec2 prevPos;
 uniform vec2 curtPos;
@@ -22,81 +23,96 @@ varying vec2 vUv;
 
 struct Cell {
 	int type;
-	int dir;
+	float amp;
 	float life;
 };
 
 const int BLNK = 0;
-const int WALL = 32;
-const int FUSE = 64;
-const int BOMB = 96;
-const int FIRE = 128;
-const int XPLD = 160;
+const int SOIL = 32;
+const int PLNT = 64;
+const int FIRE = 96;
+const int WATR = 128;
 
-//                      			[type][dir][life]
-const Cell CELL_BLNK = Cell(BLNK,	0,		0.0);
-const Cell CELL_WALL = Cell(WALL,	0,		0.0);
-const Cell CELL_FUSE = Cell(FUSE,	0,		0.0);
-const Cell CELL_BOMB = Cell(BOMB,	0,		0.0);
-const Cell CELL_FIRE = Cell(FIRE,	0,	255.0);
-const Cell CELL_XPLD = Cell(XPLD,	0,		0.0);
+//                      			[type][amp][life]
+const Cell CELL_BLNK = Cell(BLNK,	0.0,		0.0);
+const Cell CELL_PLNT = Cell(PLNT,	0.0,		0.0);
+const Cell CELL_FIRE = Cell(FIRE,	0.0,		0.0);
+const Cell CELL_WATR = Cell(WATR,	0.0,		0.0);
+const Cell CELL_SOIL = Cell(SOIL,	0.0,	  0.0);
 
-const float FIRE_FALLOFF = 8.0;
+// const float FIRE_FALLOFF = 8.0;
 
 //---------------------------------------------
 // functions
 
 Cell decode() {
-	vec3 v = texture2D(buffer, vUv).rgb * 255.0;
+	vec3 v = texture2D(buffer, vUv).rgb;
 	return Cell(
-		int(v.r + 0.5),
-		int(v.g + 0.5),
+		int(v.r * 255.0 + 0.5),
+		v.g,
 		v.b
 	);
 }
 
-Cell get(float ox, float oy) {
-	vec3 v = texture2D(buffer, vUv + vec2(ox, oy)).rgb * 255.0;
-	return Cell(
-		int(v.r + 0.5),
-		int(v.g + 0.5),
-		v.b
-	);
-}
+// Cell get(float ox, float oy) {
+// 	vec3 v = texture2D(buffer, vUv + vec2(ox, oy)).rgb;
+// 	return Cell(
+// 		int(v.r * 255.0 + 0.5),
+// 		v.g,
+// 		v.b
+// 	);
+// }
+
+// int getType(float ox, float oy) {
+// 	return int(texture2D(buffer, vUv + vec2(ox, oy)).r * 255 + 0.5);
+// }
 
 vec4 encode(Cell c) {
   return vec4(
   	float(c.type) / 255.0,
-  	float(c.dir) / 255.0,
-  	c.life / 255.0,
+  	c.amp,
+  	c.life,
   	1.0);
 }
 
+vec3 getTypeCount(float ox, float oy) {
+	int type = int(texture2D(buffer, vUv + vec2(ox, oy)).r * 255.0 + 0.5);
 
-int receiveFire(float ox, float oy, int point) {
-	Cell nc = get(ox, oy);
-
-	if (nc.type == XPLD || mod(float(nc.dir / point), 2.0) > 0.0) {
-		return point;
-	} else {
-		return 0;
-	}
+	if (type == SOIL)		 	 return vec3(0.0, 0.0, 0.0);
+	else if (type == PLNT) return vec3(1.0, 0.0, 0.0);
+	else if (type == FIRE) return vec3(0.0, 1.0, 0.0);
+	else if (type == WATR) return vec3(0.0, 0.0, 1.0);
 }
 
-bool willBurned() {
-	return get(0.0, -dy).type >= FIRE
-		||   get( dx, 0.0).type >= FIRE
-		||   get(0.0,  dy).type >= FIRE
-		||   get(-dx, 0.0).type >= FIRE;
-}
+
+// int receiveFire(float ox, float oy, int point) {
+// 	Cell nc = get(ox, oy);
+
+// 	if (nc.type == XPLD || mod(float(nc.dir / point), 2.0) > 0.0) {
+// 		return point;
+// 	} else {
+// 		return 0;
+// 	}
+// }
+
+// bool willBurned() {
+// 	return get(0.0, -dy).type >= FIRE
+// 		||   get( dx, 0.0).type >= FIRE
+// 		||   get(0.0,  dy).type >= FIRE
+// 		||   get(-dx, 0.0).type >= FIRE;
+// }
 
 float rand() {
-	return random(gl_FragCoord.xy);
+	return random(gl_FragCoord.xy + vec2(time));
 }
 
-Cell generateFire(int dir, float minLife, float maxLife) {
-	return Cell(FIRE, dir, mix(minLife, maxLife, rand()));
+float rand(float seed) {
+	return random(gl_FragCoord.xy + vec2(time + seed));
 }
+
+// Cell generateFire(int dir, float minLife, float maxLife) {
+// 	return Cell(FIRE, dir, mix(minLife, maxLife, rand()));
+// }
 
 
 //---------------------------------------------
@@ -111,50 +127,107 @@ void main() {
 	if (cursorMode == 1 && innerSegment2(pos, prevPos, curtPos, brushSize2)) {
 		
 		// fill brush
-		if (brushType == FUSE) 			c = CELL_FUSE;
-		else if (brushType == FIRE) c = generateFire(0, 64.0, 128.0);
-		else if (brushType == BOMB)	c = CELL_BOMB;
-		else if (brushType == BLNK) c = CELL_BLNK;
-		else if (brushType == WALL) c = CELL_WALL;
+		if (brushType == BLNK) 			c = CELL_BLNK;
+		else if (brushType == PLNT) c = CELL_PLNT;
+		else if (brushType == FIRE)	c = CELL_FIRE;
+		else if (brushType == WATR) c = CELL_WATR;
+		else if (brushType == SOIL) c = CELL_SOIL;
 
 	} else {
 
+		vec3 num = vec3(0.0, 0.0, 0.0);
+
+		num += getTypeCount(0.0, -dy);
+		num += getTypeCount(-dx, -dy);
+		num += getTypeCount(-dx, 0.0);
+		num += getTypeCount(-dx,  dy);
+		num += getTypeCount(0.0,  dy);
+		num += getTypeCount( dx,  dy);
+		num += getTypeCount( dx, 0.0);
+		num += getTypeCount( dx, -dy);
+
+
+		// if (rand() < 0.05) {
+
+		// }
+
+		float rand0 = rand();
+		float rand1 = rand(10120.0);
+		float rand2 = rand(2.1234 * time);
+
 		if (c.type == BLNK) {
 
-			int dir = 0;
-			dir += receiveFire(0.0, -dy,   1);
-			dir += receiveFire(-dx, -dy,   2);
-			dir += receiveFire(-dx, 0.0,   4);
-			dir += receiveFire(-dx,  dy,   8);
-			dir += receiveFire(0.0,  dy,  16);
-			dir += receiveFire( dx,  dy,  32);
-			dir += receiveFire( dx, 0.0,  64);
-			dir += receiveFire( dx, -dy, 128);
+			if (num.z > 0.0 && rand0 < 0.01) {
+				c = CELL_WATR;
+			}
 
-			// spark
-			if (dir > 0) c = generateFire(dir, 8.0, 16.0);
+		} else if (c.type == PLNT) {
 
-		} else if (c.type == FUSE) {
-
-			if (willBurned()) c = generateFire(0, 128.0, 256.0);
+			if (num.y / 8.0 > rand0) {
+				c = CELL_FIRE;
+			}
 
 		} else if (c.type == FIRE) {
 
-			c.life -= FIRE_FALLOFF;
-			if (c.life <= 0.0) c = CELL_BLNK;
-		
-		} else if (c.type == BOMB) {
+			c.amp = rand0;
 
-			if (willBurned()) c = CELL_XPLD;
+			if (num.z / 8.0 > rand1) {
 
-		} else if ( c.type == XPLD) {
+				c = CELL_WATR;
 
-			c = CELL_BLNK;
-		
+			} else if (8.0 - num.y > rand2 * 800.0 ) {
+
+				c = CELL_BLNK;
+
+			}
+
+			
+		} else if (c.type == WATR) {
+
+			if (num.x / 8.0 > rand0) {
+				c = CELL_PLNT;	
+
+			}
+
 		}
+
+		// if (c.type == BLNK) {
+
+		// 	int dir = 0;
+		// 	dir += receiveFire(0.0, -dy,   1);
+		// 	dir += receiveFire(-dx, -dy,   2);
+		// 	dir += receiveFire(-dx, 0.0,   4);
+		// 	dir += receiveFire(-dx,  dy,   8);
+		// 	dir += receiveFire(0.0,  dy,  16);
+		// 	dir += receiveFire( dx,  dy,  32);
+		// 	dir += receiveFire( dx, 0.0,  64);
+		// 	dir += receiveFire( dx, -dy, 128);
+
+		// 	// spark
+		// 	if (dir > 0) c = generateFire(dir, 8.0, 16.0);
+
+		// } else if (c.type == FUSE) {
+
+		// 	if (willBurned()) c = generateFire(0, 128.0, 256.0);
+
+		// } else if (c.type == FIRE) {
+
+		// 	c.life -= FIRE_FALLOFF;
+		// 	if (c.life <= 0.0) c = CELL_BLNK;
+		
+		// } else if (c.type == BOMB) {
+
+		// 	if (willBurned()) c = CELL_XPLD;
+
+		// } else if ( c.type == XPLD) {
+
+		// 	c = CELL_BLNK;
+		
+		// }
+
 	}
 
-	// gl_FragColor = encode(c);
-	gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);//encode(c);
+	gl_FragColor = encode(c);
+	// gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);//encode(c);
 
 }

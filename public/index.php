@@ -117,6 +117,7 @@ function gotoBlankPage() {
           [c]: Clear<br>
           [s]: Share<br>
           [g]: Gallery<br>
+          
         </p>
         <p class="help__credit">
           created by <a href="http://baku89.com" target="_blank">baku</a>

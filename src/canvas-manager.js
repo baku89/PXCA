@@ -27,6 +27,8 @@ export default class CanvasManager {
 
 		this.$canvas = $('#canvas')
 
+		this.clock = new THREE.Clock(true)
+
 		this.cursor = new Cursor(this.$canvas)
 		this.brush = new Brush()
 		this.pingpong = new PingpongRenderTarget()
@@ -68,6 +70,7 @@ export default class CanvasManager {
 			fragmentShader: system.caShader,
 			uniforms: {
 				resolution: {type: 'v2', value: new THREE.Vector2()},
+				time: 			{type: 'f',	 value: this.clock.getElapsedTime()},
 				dx: 				{type: 'f',	 value: null},
 				dy: 				{type: 'f',	 value: null},
 
@@ -216,6 +219,7 @@ export default class CanvasManager {
 			this.uniforms.buffer.value = this.pingpong.src
 			this.cursor.update()
 
+			this.uniforms.time.value = this.clock.getElapsedTime()
 			this.uniforms.cursorMode.value = this.cursor.mode
 			this.uniforms.brushType.value = this.brush.index
 			this.uniforms.brushSize2.value = this.brush.size2

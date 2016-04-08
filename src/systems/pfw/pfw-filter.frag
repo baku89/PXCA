@@ -16,38 +16,44 @@ varying vec2 vUv;
 
 struct Cell {
 	int type;
-	int dir;
+	float amp;
 	float life;
 };
 
 const int BLNK = 0;
-const int WALL = 32;
-const int FUSE = 64;
-const int BOMB = 96;
-const int FIRE = 128;
-const int XPLD = 160;
+const int SOIL = 32;
+const int PLNT = 64;
+const int FIRE = 96;
+const int WATR = 128;
 
-const vec3 COLOR_BLNK		= vec3(0.278, 0.302, 0.322);
-const vec3 COLOR_WALL1	= vec3(0.153, 0.18, 0.22);
-const vec3 COLOR_WALL2	= vec3(0.196, 0.224, 0.259);
-const vec3 COLOR_FUSE		= vec3(0.835, 0.843, 0.749);
-const vec3 COLOR_BOMB		= vec3(0.855, 0.851, 0.361);
+const vec3 COLOR_BLNK		= vec3(0.0, 0.0, 0.0);
+const vec3 COLOR_SOIL		= vec3(0.5, 0.5, 0.5);
+const vec3 COLOR_PLNT		= vec3(0.0, 0.843, 0.0);
 const vec3 COLOR_FIRE_BIRTH = vec3(0.933, 0.568, 0.129);
 const vec3 COLOR_FIRE_DEATH	= vec3(0.960, 0.149, 0.380);
+const vec3 COLOR_WATR		= vec3(0.0, 0.0, 0.8);
 
 const vec3 BRUSH_HIGHLIHGT = vec3(0.1);
-const vec3 OUTER_COLOR = vec3(0.164, 0.184, 0.2);
+const vec3 OUTER_COLOR = vec3(0.0, 0.0, 0.0);
 
 //---------------------------------------------
 // functions
 
 Cell decode() {
-	vec3 v = texture2D(buffer, vUv).rgb * 255.0;
+	vec3 v = texture2D(buffer, vUv).rgb;
 	return Cell(
-		int(v.r + 0.5),
-		int(v.g + 0.5),
+		int(v.r * 255.0 + 0.5),
+		v.g,
 		v.b
 	);
+}
+
+vec4 encode(Cell c) {
+  return vec4(
+  	float(c.type) / 255.0,
+  	c.amp,
+  	c.life,
+  	1.0);
 }
 
 
@@ -63,22 +69,36 @@ void main() {
 	if (cell.type == BLNK) {
 		color = COLOR_BLNK;
 
-	} else if ( cell.type == WALL ) {
-		if (mod(pos.x + pos.y, 3.0) >= 1.0)
-			color = COLOR_WALL1;
-		else
-			color = COLOR_WALL2;
+	} else if (cell.type == SOIL) {
+		color = COLOR_SOIL;
 	
-	} else if (cell.type == FUSE) {
-		color = COLOR_FUSE;
+	} else if (cell.type == PLNT) {
+		color = COLOR_PLNT;
+
+	} else if (cell.type == FIRE) {
+		color = mix(COLOR_FIRE_BIRTH, COLOR_FIRE_DEATH, cell.amp);
 	
-	} else if (cell.type == BOMB) {
-		color = COLOR_BOMB;
-	
-	} else {
-		// fire
-		color = mix(COLOR_FIRE_DEATH, COLOR_FIRE_BIRTH, cell.life / 255.0);
+	} else if (cell.type == WATR) {
+		color = COLOR_WATR;
+
 	}
+
+	// } else if ( cell.type == WALL ) {
+	// 	if (mod(pos.x + pos.y, 3.0) >= 1.0)
+	// 		color = COLOR_WALL1;
+	// 	else
+	// 		color = COLOR_WALL2;
+	
+	// } else if (cell.type == FUSE) {
+	// 	color = COLOR_FUSE;
+	
+	// } else if (cell.type == BOMB) {
+	// 	color = COLOR_BOMB;
+	
+	// } else {
+	// 	// fire
+	// 	color = mix(COLOR_FIRE_DEATH, COLOR_FIRE_BIRTH, cell.life / 255.0);
+	// }
 
 	// cursor
 	if (distanceSquared(pos, curtPos) < brushSize2) {
@@ -92,7 +112,6 @@ void main() {
 	}
 
 	
-	// gl_FragColor = vec4(color, 1.0);
+	gl_FragColor = vec4(color, 1.0);
 
-	gl_FragCoord = texture2D(buffer, vUv);
 }
