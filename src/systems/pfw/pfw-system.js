@@ -6,6 +6,7 @@ class PfwSystem extends CASystem {
 	constructor() {
 		super()
 
+		this.name = '🔥🌳💧'
 		this.type = 2
 		
 		this.brushData = {

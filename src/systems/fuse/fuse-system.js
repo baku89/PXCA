@@ -6,6 +6,7 @@ class FuseSystem extends CASystem {
 	constructor() {
 		super()
 
+		this.name = 'Fuse'
 		this.type = 1
 		
 		this.brushData = {

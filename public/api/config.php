@@ -26,4 +26,15 @@ define('DATABASE', 			'suyarigasumi_fuse2');
 define('SHARE_WIDTH', 	240);
 define('SHARE_HEIGHT',	160);
 
+
+$SYSTEM_INFO = [
+	'fuse' 	=> ['type' => 1, 'name' => 'F u s e'],
+	'pfw' 	=> ['type' => 2, 'name' => '🌳vs🔥vs💧']
+];
+
+$SYSTEM_SLUG = [
+	1 => 'fuse',
+	2 => 'pfw'
+];
+
 ?>

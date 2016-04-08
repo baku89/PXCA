@@ -25,11 +25,13 @@ class Router {
 	}
 
 	clear() {
-		this.id = null
+		console.log('clear')
+		this._id = null
 		this.history.replace('')
 	}
 
 	set id(id) {
+		console.log(id)
 		this._id = id
 		this.history.replace(`?n=${id}`)
 		// this.history.replace(`${id}`)

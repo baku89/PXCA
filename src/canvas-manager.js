@@ -71,6 +71,7 @@ export default class CanvasManager {
 			uniforms: {
 				resolution: {type: 'v2', value: new THREE.Vector2()},
 				time: 			{type: 'f',	 value: this.clock.getElapsedTime()},
+				seed: 			{type: 'f',  value: 0},
 				dx: 				{type: 'f',	 value: null},
 				dy: 				{type: 'f',	 value: null},
 
@@ -220,6 +221,7 @@ export default class CanvasManager {
 			this.cursor.update()
 
 			this.uniforms.time.value = this.clock.getElapsedTime()
+			this.uniforms.seed.value = Math.random()
 			this.uniforms.cursorMode.value = this.cursor.mode
 			this.uniforms.brushType.value = this.brush.index
 			this.uniforms.brushSize2.value = this.brush.size2

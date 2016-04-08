@@ -8,6 +8,7 @@ uniform float dy;
 
 uniform sampler2D buffer;
 uniform float time;
+uniform float seed;
 uniform vec2 resolution;
 uniform vec2 prevPos;
 uniform vec2 curtPos;
@@ -152,8 +153,8 @@ void main() {
 		// }
 
 		float rand0 = rand();
-		float rand1 = rand(10120.0);
-		float rand2 = rand(2.1234 * time);
+		float rand1 = rand(seed);
+		float rand2 = rand(seed * time);
 
 		if (c.type == BLNK) {
 
@@ -163,7 +164,7 @@ void main() {
 
 		} else if (c.type == PLNT) {
 
-			if (num.y / 8.0 > rand0) {
+			if (num.y * SPEED > rand0) {
 				c = CELL_FIRE;
 			}
 
@@ -171,7 +172,7 @@ void main() {
 
 			c.amp = rand0;
 
-			if (num.z / 8.0 > rand1) {
+			if (num.z * SPEED > rand1) {
 
 				c = CELL_WATR;
 
@@ -184,7 +185,7 @@ void main() {
 			
 		} else if (c.type == WATR) {
 
-			if (num.x / 8.0 > rand0) {
+			if (num.x * SPEED > rand0) {
 				c = CELL_PLNT;	
 
 			}

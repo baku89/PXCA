@@ -1,6 +1,8 @@
 
 import MobileDetect from 'mobile-detect'
 
+
+
 let md = new MobileDetect(window.navigator.userAgent)
 let isPC = !md.mobile()
 

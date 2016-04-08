@@ -8,12 +8,13 @@ head
 	meta(name='description', content='#{description}')
 	meta(name='viewport', content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no')
 
-	title F u s e
+	title
+		- echo $title
 
 	//- Facebook OGP
-	meta(property='og:site_name' content='Fuse')
-	meta(property='og:title' content='<?= $title ?>')
-	meta(property='og:description' content='WebGL cellular automaton')
+	meta(property='og:site_name' content='<?= $title ?>')
+	meta(property='og:title' content='<?= $page_title ?>')
+	meta(property='og:description' content='<?= $description ?>')
 	meta(property='og:image' content='<?= $thumb_url ?>')
 	meta(property='og:type' content='website')
 	meta(property='og:url' content='<?= $url ?>')
@@ -21,8 +22,8 @@ head
 	//- Twitter Card
 	meta(name='twitter:card' content='photo')
 	meta(name='twitter:site' content='_baku89')
-	meta(name='twitter:title' content='<?= $title ?>')
-	meta(name='twitter:description' content='WebGL cellular automaton')
+	meta(name='twitter:title' content='<?= $page_title ?>')
+	meta(name='twitter:description' content='<?= $description ?>')
 	meta(name='twitter:image' content='<?= $thumb_url ?>')
 	meta(name='twitter:url' content='<?= $url ?>')
 

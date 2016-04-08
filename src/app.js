@@ -7,8 +7,7 @@ import Mobile from './mobile.js'
 import CanvasManager from './canvas-manager.js'
 import GalleryManager from './gallery-manager.js'
 
-import FuseSystem from './systems/fuse/fuse-system.js'
-import PfwSystem from './systems/pfw/pfw-system.js'
+import Systems from './systems.js'
 
 const state = window.state
 const router = window.router
@@ -18,7 +17,7 @@ export default class App {
 	constructor() {
 
 		this.canvasManager = new CanvasManager()
-		this.canvasManager.initSystem(PfwSystem)
+		this.canvasManager.initSystem(Systems[1])
 
 		this.galleryManager = new GalleryManager()
 
