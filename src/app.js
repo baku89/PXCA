@@ -7,10 +7,11 @@ import Mobile from './mobile.js'
 import CanvasManager from './canvas-manager.js'
 import GalleryManager from './gallery-manager.js'
 
-import Systems from './systems.js'
+import Systems from './systems.js';
 
 const state = window.state
 const router = window.router
+
 
 export default class App {
 

@@ -6,8 +6,8 @@ class FuseSystem extends CASystem {
 	constructor() {
 		super()
 
-		this.name = 'Fuse'
-		this.type = 1
+		this.name = 'F u s e'
+		this.type = 'Fuse'
 		
 		this.brushData = {
 			blnk: {name: 'Eraser', color: '#61686E', index: 	0,	size: Config.PC ? 5.0 : 5.0},

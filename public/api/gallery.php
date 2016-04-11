@@ -34,7 +34,7 @@ $sql->close();
 // format data
 
 $data = [
-	'next' => SITEROOT . "/api/get.php?page=" . ($page+1),
+	'next' => SITEROOT . "/api/gallery.php?page=" . ($page+1),
 	'items' => $items
 ];
 

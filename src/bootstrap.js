@@ -12,14 +12,11 @@ isSupported &= (function() {
 
 })()
 
-
 // history
 isSupported &= !!(window.history && window.history.pushState)
 
-
 // webworkers
 isSupported &= !!window.Worker
-
 
 
 

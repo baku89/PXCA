@@ -110,6 +110,7 @@ export default class Share {
 
 		if (result == 'failed') {
 			this.alert.$data.message = data.message
+			
 
 		} else if (result == 'succeed') {
 			this.alert.$data.url = data.url

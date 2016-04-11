@@ -29,13 +29,13 @@ head
 
 	//- CSS
 	link(href='http://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css')
-	link(rel="stylesheet" type="text/css" href="style.css")
+	link(rel="stylesheet" type="text/css" href="/style.css")
 
 	include ./jade/_ga.jade
 
 body()
 
-	.page-wrapper
+	.app
 
 		canvas#canvas.is-hidden
 			.test UncoUnco
@@ -126,16 +126,15 @@ body()
 			//- ul.layer--gallery__list.is-passthru
 			//- .loading.layer--gallery__loading
 
-	
-		
 	//- JS
 	script(type="text/javascript").
 		<? if (!is_null($id)) : ?>
 			window.initialMap = {
+				type: '<?= $type ?>',
 				id: <?= $id ?>,
 				map: '<?= $map_url ?>'
 			}
 		<? endif ?>
 		
-	script(type="text/javascript" src="./bootstrap.js")
+	script(type="text/javascript" src="/bootstrap.js")
 

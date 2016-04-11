@@ -30,7 +30,7 @@ gulp.task('webpack', () => {
 	return gulp.src('')
 		.pipe($.plumber())
 		.pipe(WebpackStream(config))
-		.pipe(gulp.dest('public'))
+		.pipe(gulp.dest('public/js'))
     .pipe(browserSync.stream())
 })
 

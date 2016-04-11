@@ -188,12 +188,9 @@ span.wall {
 span.ersr {
   color: #7b848c;
 }
-.page-wrapper {
+.app {
   min-width: 960px;
   min-height: 720px;
-}
-body[data-status=unsupported] .page-wrapper {
-  display: none;
 }
 #canvas {
   position: absolute;

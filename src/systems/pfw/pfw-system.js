@@ -6,8 +6,8 @@ class PfwSystem extends CASystem {
 	constructor() {
 		super()
 
-		this.name = '🔥🌳💧'
-		this.type = 2
+		this.title = '🔥🌳💧'
+		this.type = 'pfw'
 		
 		this.brushData = {
 			blnk: {name: 'Eraser',	color: '#222222', index:   0,	size: Config.PC ? 5.0 : 5.0},

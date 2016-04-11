@@ -28,8 +28,8 @@ define('SHARE_HEIGHT',	160);
 
 
 $SYSTEM_INFO = [
-	'fuse' 	=> ['type' => 1, 'name' => 'F u s e'],
-	'pfw' 	=> ['type' => 2, 'name' => '🌳vs🔥vs💧']
+	'fuse' 	=> ['title' => 'F u s e'],
+	'pfw' 	=> ['title' => '🌳vs🔥vs💧']
 ];
 
 $SYSTEM_SLUG = [
