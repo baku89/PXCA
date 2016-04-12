@@ -5,7 +5,8 @@ module.exports = {
 		bootstrap: './src/bootstrap.js'
 	},
 	output: {
-		filename: '[name].js'
+		filename: '[name].js',
+		publicPath: "/js/"
 	},
 	resolve: {
 		alias: {},

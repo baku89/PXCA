@@ -1,29 +1,32 @@
 import ticker from 'ticker'
 
-import './router.js'
+/*
 import Config from './config.js'
-import Navigation from './navigation.js'
+
 import Mobile from './mobile.js'
-import CanvasManager from './canvas-manager.js'
-import GalleryManager from './gallery-manager.js'
 
-import Systems from './systems.js';
 
+*/
+
+import Navigation from './navigation.js'
+import Home from './home.js'
+import Gallery from './gallery.js'
+import Canvas from './canvas.js'
+import Systems from './systems.js'
+
+
+const initialState = window.initialState
 const state = window.state
-const router = window.router
-
 
 export default class App {
 
 	constructor() {
 
-		this.canvasManager = new CanvasManager()
-		this.canvasManager.initSystem(Systems[1])
-
-		this.galleryManager = new GalleryManager()
+		this.$home = new Home()
+		this.canvas = new Canvas()
+		this.gallery = new Gallery()
 
 		this.navigation = new Navigation()
-		this.navigation.on('clear', this.onClear.bind(this))
 
 		state.onenterdraw = () => {
 			this.isDraw = true
@@ -34,17 +37,13 @@ export default class App {
 
 		document.oncontextmenu = () => false
 
-		// routing
-		router.init()
+		state.init()
 
 		ticker(window, 50).on('tick', this.draw.bind(this))
-	}
-
-	onClear() {
-		this.canvasManager.clear()
+		
 	}
 
 	draw() {
-		this.canvasManager.render(this.isDraw)
+		this.canvas.render(this.isDraw)
 	}
 }

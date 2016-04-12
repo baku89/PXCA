@@ -2,6 +2,7 @@ import {createHistory} from 'history'
 // import EventEmitter from 'eventemitter3'
 
 const state = window.state
+const initialState = window.initialState
 
 class Router {
 
@@ -12,7 +13,11 @@ class Router {
 	}
 
 	init() {
-		if (window.initialMap) {
+
+		/*
+		if (initialMap.type) {
+
+		}
 
 			this._id = window.initialMap.id
 
@@ -21,7 +26,7 @@ class Router {
 
 		} else {
 			state.resume()
-		}
+		}*/
 	}
 
 	clear() {

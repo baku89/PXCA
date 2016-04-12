@@ -8,9 +8,7 @@ export default class Navigation extends EventEmitter {
 		super()
 
 		$('.menu__clear').on('click', () => {
-			if (state.current == 'menu')
-				state.resume()
-			this.emit('clear')
+			state.clear()
 		})
 
 		$('.menu__help').on('click', () => {
@@ -30,7 +28,4 @@ export default class Navigation extends EventEmitter {
 		})
 
 	}
-
-
-
 }

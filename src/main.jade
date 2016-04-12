@@ -1,5 +1,4 @@
-include ./jade/_header.php
-
+//- include ./jade/_header.php
 doctype html
 head
 	base(href='./')
@@ -15,7 +14,7 @@ head
 	meta(property='og:site_name' content='<?= $title ?>')
 	meta(property='og:title' content='<?= $page_title ?>')
 	meta(property='og:description' content='<?= $description ?>')
-	meta(property='og:image' content='<?= $thumb_url ?>')
+	meta(property='og:image' content='<?= $thumb ?>')
 	meta(property='og:type' content='website')
 	meta(property='og:url' content='<?= $url ?>')
 
@@ -24,7 +23,7 @@ head
 	meta(name='twitter:site' content='_baku89')
 	meta(name='twitter:title' content='<?= $page_title ?>')
 	meta(name='twitter:description' content='<?= $description ?>')
-	meta(name='twitter:image' content='<?= $thumb_url ?>')
+	meta(name='twitter:image' content='<?= $thumb ?>')
 	meta(name='twitter:url' content='<?= $url ?>')
 
 	//- CSS
@@ -37,8 +36,15 @@ body()
 
 	.app
 
+		section.home.layer.layer--home
+			ul.home__type-list
+				li.home__type-item(v-for='system in systems' v-on:click.stop='changeType($event, system.type)')
+					.home__type-label {{system.title}}
+					ul.home__type-palette
+						li.home__type-brush(v-for='brush in system.brushData' v-bind:style='{background: brush.color}')
+
+
 		canvas#canvas.is-hidden
-			.test UncoUnco
 
 		.loading
 
@@ -102,12 +108,6 @@ body()
 					.alert__content.alert--failed__content {{message}}
 					.alert__choices
 						button.alert__btn(v-on:click='resume()') Resume
-
-
-			//- .is-passthru.share-frame.share-frame--top
-			//- .is-passthru.share-frame.share-frame--right
-			//- .is-passthru.share-frame.share-frame--bottom
-			//- .is-passthru.share-frame.share-frame--left
 					
 
 		section.gallery.layer.layer--gallery(
@@ -122,19 +122,18 @@ body()
 						.gallery-item__id {{item.id}}
 						img.gallery-item__thumb(v-bind:src='item.thumb' src='')
 
-			//- ul.gallery__list
-			//- ul.layer--gallery__list.is-passthru
-			//- .loading.layer--gallery__loading
-
 	//- JS
 	script(type="text/javascript").
+		window.initialState = {};
+
+		<? if (!is_null($type)) : ?>
+			window.initialState.type = '<?= $type ?>';
+		<? endif; ?>
+
 		<? if (!is_null($id)) : ?>
-			window.initialMap = {
-				type: '<?= $type ?>',
-				id: <?= $id ?>,
-				map: '<?= $map_url ?>'
-			}
-		<? endif ?>
+			window.initialState.id = <?= $id ?>;
+			window.initialState.map = <?= $map ?>;
+		<? endif; ?>
 		
-	script(type="text/javascript" src="/bootstrap.js")
+	script(type="text/javascript" src="/js/bootstrap.js")
 

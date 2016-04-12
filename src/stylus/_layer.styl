@@ -19,6 +19,126 @@
 	-webkit-overflow-scrolling touch
 	transition: transform 0.5s custom-bezier
 
+
+//--------------------------------------------------
+// home
+
+.layer--home
+	top -100%
+	transition: transform 0.5s custom-bezier
+	
+	+status('home')
+		transform translateY(100%)
+
+.home
+	// background #f0f0f0
+	
+	// color c-black
+	
+.home__type-list
+	position absolute
+	left 10%
+	right 10%
+	height 100%
+	display flex
+	flex-direction column
+	
+.home__type-item
+	flex-grow 1
+	display flex
+	flex-direction column
+	justify-content center
+	position relative
+	border-bottom 1px solid c-text
+	cursor pointer
+	
+	&:last-child
+		border 0
+	
+	&:before
+		content: '\00a0'
+		display: block
+		position: absolute
+		width: 100%
+		height: 100%
+		top: 0
+		left: 0
+	
+	&:hover:before
+		background: rgba(255, 255, 255, 0.3)
+
+.home__type-label
+	text-align center
+	margin-bottom 10px
+
+.home__type-palette
+	width 100%
+	height 100%
+	display flex
+	justify-content center
+
+.home__type-brush
+	width 36px
+	height 36px
+	border-radius 50%
+	margin 6px
+
+
+/*
+.palette
+	position: absolute
+	top 11px
+	left: 0
+	right 0
+	height 0
+	display flex
+	justify-content center
+	z-index: 10
+
+	+mobile()
+		top: 6px
+
+	+landscape()
+		top 0
+		bottom 0
+		width 0
+		height auto
+		left 11px
+		right auto
+		flex-direction column
+		align-content center
+
+.brush
+	position: relative
+	width: 36px
+	height: 36px
+	margin: 6px
+	border: 0 solid white
+	border-radius: 18px
+	text-indent: -9999px
+	overflow: hidden
+	transform: scale(0.8)
+	transition: all 0.13s custom-bezier
+
+	&:hover 
+		transform: scale(0.85)
+
+	&:hover:before 
+		content: '\00a0'
+		display: block
+		position: absolute
+		width: 100%
+		height: 100%
+		top: 0
+		left: 0
+		background: rgba(255, 255, 255, 0.3)
+
+	&.is-active 
+		border-width: 2px
+		transform: scale(1)
+*/
+
+
 //--------------------------------------------------
 // gallery
 

@@ -10,7 +10,6 @@ $isRemote = !(substr($_SERVER['REMOTE_ADDR'], 0, 4) == '127.'
 
 header('Access-Control-Allow-Origin: *');
 
-
 // const
 define('SITEROOT', 			$isRemote ? 'http://s.baku89.com/fuse' : 'http://localhost:3000');
 define('DATA_DIR',			$_SERVER['DOCUMENT_ROOT'] . '/data');
@@ -30,11 +29,6 @@ define('SHARE_HEIGHT',	160);
 $SYSTEM_INFO = [
 	'fuse' 	=> ['title' => 'F u s e'],
 	'pfw' 	=> ['title' => '🌳vs🔥vs💧']
-];
-
-$SYSTEM_SLUG = [
-	1 => 'fuse',
-	2 => 'pfw'
 ];
 
 ?>

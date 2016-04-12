@@ -11,6 +11,7 @@ import Cursor from './cursor.js'
 import Share from './share.js'
 import Base64Util from './base64-util.js'
 import Mobile from './mobile.js'
+import Systems from './systems.js'
 
 const renderer = window.renderer
 const state = window.state
@@ -48,6 +49,14 @@ export default class CanvasManager {
 
 		this.clear = this.clear.bind(this)
 
+		state.onchangeType = (evt, from, to, type) => {
+			console.log('aaaa')
+			this.changeType(type)
+		}
+
+		state.onclear = this.clear.bind(this)
+
+
 		state.onleaveloading = () => {this.$canvas.removeClass('is-hidden')}
 		state.onloadMap = (event, from, to, map) => {
 			console.log(map)
@@ -60,7 +69,9 @@ export default class CanvasManager {
 		})
 	}
 
-	initSystem(system) {
+	changeType(type) {
+		let system = Systems[type]
+		console.log(`init system=${system.type}`)
 
 		this.system = system
 
@@ -112,7 +123,6 @@ export default class CanvasManager {
 					state.pause()
 				else
 					state.resume()
-				
 				break	
 			case 'S':
 				state.postMap()
@@ -121,7 +131,7 @@ export default class CanvasManager {
 				state.showGallery()
 				break
 			case 'C':
-				this.clear()
+				state.clear()
 				break
 			default:
 				if (e.keyCode == 38) {
@@ -136,11 +146,8 @@ export default class CanvasManager {
 
 
 	clear() {
-		router.clear()
 		this.pingpong.clear()
 	}
-
-	
 
 	onResize() {
 		let ww = window.innerWidth
@@ -205,7 +212,6 @@ export default class CanvasManager {
 		}
 
 		map.onerror = () => {
-			router.clear()
 			state.resume()
 			console.error('CanvasManager: cannot load map')
 		}
@@ -284,7 +290,7 @@ export default class CanvasManager {
 				type: this.system.type,
 				map: map64,
 				thumb: thumb64,
-				parent_id: router.id,
+				parent_id: state.id,
 				base_color: this.system.baseColor
 			},
 
@@ -302,8 +308,6 @@ export default class CanvasManager {
 					return
 				}
 
-				router.id = json.id
-
 				state.showShare('succeed', {
 					url: json.url,
 					id: json.id
@@ -314,6 +318,4 @@ export default class CanvasManager {
 		})
 
 	}
-
-
 }
