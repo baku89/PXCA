@@ -41,16 +41,19 @@ body()
 				li.home__type-item(v-for='system in systems' v-on:click.stop='changeType($event, system.type)')
 					.home__type-label {{system.title}}
 					ul.home__type-palette
-						li.home__type-brush(v-for='brush in system.brushData' v-bind:style='{background: brush.color}')
+						li.home__type-brush(v-for='type in system.brushes.order' v-bind:style='{background: system.brushes.list[type].color}')
 
 
 		canvas#canvas.is-hidden
 
 		.loading
 
-		//- button.palette-arrow.prev
 		.palette
-		//- button.palette-arrow.next
+			button.brush(
+				v-for='type in brushes.order'
+				:class="{'active': brushes.active == type}"
+				v-on:click='changeType(type)'
+				:style='{background: brushes.list[type].color}')
 
 		.layer.layer--menu-darken
 		nav.menu
@@ -60,24 +63,24 @@ body()
 				.l.l3
 
 			ul.menu__lists
-				li: a.menu__clear Clear
+				li: a.menu__change Change
 				li: a.menu__share Share
 				li: a.menu__gallery Gallery
+				li: a.menu__clear  X 
 				li: a.menu__help ?
 
 		
 
 		section.help.layer.layer--help
 			.help__container
-				h2 Fuse
+				h2 {{system.name}}
 				
-				p.
-					This demo simulates burning fuses and exploding bombs using a method of a sort of cellular automaton(CA). Click and drag to draw a line. Select parettes on top to change brush type(<span class="fuse">fuse</span>, <span class="bomb">bomb</span>, <span class="fire">fire</span>, <span class="wall">wall</span>, <span class="ersr">eraser</span> respectively from left to right). The CA program is mainly written in GLSL.
+				p {{{htmlHelp}}}
 				
 				h3.help__shortcut Shortcuts
 				
 				p.help__shortcut-list.
-					[1-5]: Change <span class="fuse">B</span><span class="bomb">r</span><span class="fire">u</span><span class="wall">s</span><span class="ersr">h</span><br>
+					[1-9]: Change Brush<br>
 					[↑↓ or right drag]: Change brush size<br>
 					[space]: Toggle pause<br>
 					[c]: Clear<br>
@@ -93,18 +96,18 @@ body()
 
 		section.share.layer.layer--share
 
-			.alert(v-bind:class="{'show': show}")
+			.alert(v-bind:class="{'show': show}" v-on:click.stop='')
 
-				.alert__wrapper--succeed(v-show="result == 'succeed'")
+				.alert__wrapper--succeed(v-show="status == 'succeed'")
 					.alert__content.alert--succeed__content
 						input.alert__share-url(type="text" value="{{url}}")
 						.alert__tweet
-							a.alert__tweet-link Tweet
+							a.alert__tweet-link(v-on:click='tweet()') Tweet
 					.alert__choices
-						button.alert__btn(v-on:click.stop='showGallery()') See Others..
+						button.alert__btn(v-on:click='showGallery()') See Others..
 						button.alert__btn(v-on:click='resume()') Resume
 
-				.alert__wrapper--failed(v-show="result == 'failed'")
+				.alert__wrapper--failed(v-show="status == 'failed'")
 					.alert__content.alert--failed__content {{message}}
 					.alert__choices
 						button.alert__btn(v-on:click='resume()') Resume
@@ -132,7 +135,7 @@ body()
 
 		<? if (!is_null($id)) : ?>
 			window.initialState.id = <?= $id ?>;
-			window.initialState.map = <?= $map ?>;
+			window.initialState.map = '<?= $map ?>';
 		<? endif; ?>
 		
 	script(type="text/javascript" src="/js/bootstrap.js")

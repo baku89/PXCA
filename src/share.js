@@ -24,12 +24,50 @@ export default class Share {
 			}
 		})
 
+		this.alert = new Vue({
+			el: '.alert',
+			data: {
+				show: false,
+				status: '',
+				message: '',
+				url: '',
+				id: null
+			},
+			methods: {
+				resume() { state.resume() },
+				showGallery() { state.showGallery() },
+				tweet() {
+					let windowOptions = 'scrollbars=yes,resizable=yes,toolbar=no,location=yes',
+						width = 550,
+						height = 420,
+						winHeight = screen.height,
+						winWidth = screen.width
+			
+					let left = Math.round((winWidth / 2) - (width / 2))
+					let top = 0
+			
+					if (winHeight > height)
+						top = Math.round((winHeight / 2) - (height / 2))
+				
+					let params = {
+						url: this.url,
+						text: `Fuse #${this.id}`
+					}
+			
+					let intentUrl = `https://twitter.com/intent/tweet?${$.param(params)}`
+				
+					window.open(intentUrl, 'intent', 
+						`${windowOptions},width=${width},height=${height},left=${left},top=${top}`)
+				}
+			}
+		})
+
 
 		state.onposting = (s) => {
 			this.setOuterOpacity(OUTER_OPACITY.share)
 		}
 
-		state.onshowShare = this.onShowShare.bind(this)
+		state.onshowShare = this.onShowShare.bind(this.alert)
 
 		state.onleaveshare = () => {
 			this.alert.$data.show = false
@@ -39,21 +77,6 @@ export default class Share {
 			
 			return StateMachine.ASYNC
 		}
-
-		this.alert = new Vue({
-			el: '.alert',
-			data: {
-				show: false,
-				result: '',
-				message: '',
-				url: ''
-			},
-			methods: {
-				resume() { state.resume() },
-				showGallery() { state.showGallery() }
-			}
-		})
-
 	}
 
 	get rect() {
@@ -102,51 +125,20 @@ export default class Share {
 
 	}
 
-	onShowShare(event, from, to, result, data) {
+	onShowShare(event, from, to, res) {
+		
+		if (res.status == 'failed') {
+			this.message = res.content.message
 
-		console.log('aa')
-
-		console.log(this)
-
-		if (result == 'failed') {
-			this.alert.$data.message = data.message
-			
-
-		} else if (result == 'succeed') {
-			this.alert.$data.url = data.url
+		} else if (res.status == 'succeed') {
+			this.url = res.content.url
+			this.id = res.content.id
 
 		}
 
-		this.alert.$data.result = result
-		this.alert.$data.show = true
+		this.status = res.status
 
-		console.log(this.alert.$data)
+		console.log(this.status)
+		this.show = true
 	}
-
-	openTweetIntent(data) {
-		let windowOptions = 'scrollbars=yes,resizable=yes,toolbar=no,location=yes',
-			width = 550,
-			height = 420,
-			winHeight = screen.height,
-			winWidth = screen.width
-
-		let left = Math.round((winWidth / 2) - (width / 2))
-		let top = 0
-
-		if (winHeight > height) {
-			top = Math.round((winHeight / 2) - (height / 2))
-		}
-
-		let params = {
-			url: data.url,
-			text: `Fuse #${data.id}`
-		}
-
-		let intentUrl = `https://twitter.com/intent/tweet?${$.param(params)}`
-
-		window.open(intentUrl, 'intent', 
-			`${windowOptions},width=${width},height=${height},left=${left},top=${top}`)
-	}
-
-
 }

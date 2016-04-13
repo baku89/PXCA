@@ -7,6 +7,10 @@ export default class Navigation extends EventEmitter {
 	constructor() {
 		super()
 
+		$('.menu__change').on('click', () => {
+			state.showHome()
+		})
+
 		$('.menu__clear').on('click', () => {
 			state.clear()
 		})

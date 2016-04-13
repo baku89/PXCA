@@ -1,9 +1,11 @@
 
 
 import FuseSystem from './systems/fuse/fuse-system.js'
-import PfwSystem from './systems/pfw/pfw-system.js'
+import TriSystem from './systems/tri/tri-system.js'
+import PhotonSystem from './systems/photon/photon-system.js'
 
 export default {
 	fuse: FuseSystem,
-	pfw: PfwSystem
+	tri: TriSystem,
+	photon: PhotonSystem
 }

@@ -1,4 +1,5 @@
 #pragma glslify: distanceSquared = require(../../shaders/distance-squared.glsl)
+#pragma glslify: hsv2rgb = require(glsl-hsv2rgb)
 
 //---------------------------------------------
 
@@ -9,6 +10,8 @@ uniform vec2 curtPos;
 uniform float brushSize2;
 uniform float outerOpacity;
 
+uniform sampler2D rainbow;
+
 varying vec2 vUv;
 
 //---------------------------------------------
@@ -17,23 +20,19 @@ varying vec2 vUv;
 struct Cell {
 	int type;
 	int dir;
-	float life;
+	float hue;
 };
 
 const int BLNK = 0;
 const int WALL = 32;
-const int FUSE = 64;
-const int BOMB = 96;
-const int FIRE = 128;
-const int XPLD = 160;
+const int MIRR = 64;
+const int LGHT = 96;
+const int PHOT = 128;
 
-const vec3 COLOR_BLNK		= vec3(0.278, 0.302, 0.322);
-const vec3 COLOR_WALL1	= vec3(0.153, 0.18, 0.22);
-const vec3 COLOR_WALL2	= vec3(0.196, 0.224, 0.259);
-const vec3 COLOR_FUSE		= vec3(0.835, 0.843, 0.749);
-const vec3 COLOR_BOMB		= vec3(0.855, 0.851, 0.361);
-const vec3 COLOR_FIRE_BIRTH = vec3(0.933, 0.568, 0.129);
-const vec3 COLOR_FIRE_DEATH	= vec3(0.960, 0.149, 0.380);
+const vec3 COLOR_BLNK		= vec3(0.184, 0.152, 0.211);
+const vec3 COLOR_WALL		= vec3(0.270, 0.207, 0.356);
+const vec3 COLOR_MIRR		= vec3(0.760, 0.878, 0.921);
+const vec3 COLOR_LGHT		= vec3(1.0, 1.0, 1.0);
 
 const vec3 BRUSH_HIGHLIHGT = vec3(0.1);
 const vec3 OUTER_COLOR = vec3(0.133, 0.133, 0.133);
@@ -42,10 +41,10 @@ const vec3 OUTER_COLOR = vec3(0.133, 0.133, 0.133);
 // functions
 
 Cell decode() {
-	vec3 v = texture2D(buffer, vUv).rgb * 255.0;
+	vec3 v = texture2D(buffer, vUv).rgb;
 	return Cell(
-		int(v.r + 0.5),
-		int(v.g + 0.5),
+		int(v.r * 255.0 + 0.5),
+		int(v.g * 255.0 + 0.5),
 		v.b
 	);
 }
@@ -55,27 +54,29 @@ void main() {
 
 	vec2 pos = gl_FragCoord.xy;
 
-	Cell cell = decode();
+	Cell c = decode();
 	vec3 color = vec3(0.0);
+
+	vec3 lightColor = texture2D(rainbow, vec2(c.hue, 0.0)).rgb;//hsv2rgb(vec3(floor(c.hue * 24.0) / 24.0, 1.0, 1.0));
 	
-	if (cell.type == BLNK) {
+	if (c.type == BLNK) {
 		color = COLOR_BLNK;
 
-	} else if ( cell.type == WALL ) {
-		if (mod(pos.x + pos.y, 3.0) >= 1.0)
-			color = COLOR_WALL1;
-		else
-			color = COLOR_WALL2;
+	} else if (c.type == WALL) {
+
+		color = mix(COLOR_WALL, lightColor, float(c.dir) / 255.0);
+
+	} else if (c.type == MIRR) {
+
+		color = COLOR_MIRR;
 	
-	} else if (cell.type == FUSE) {
-		color = COLOR_FUSE;
-	
-	} else if (cell.type == BOMB) {
-		color = COLOR_BOMB;
-	
-	} else {
-		// fire
-		color = mix(COLOR_FIRE_DEATH, COLOR_FIRE_BIRTH, cell.life / 255.0);
+	} else if (c.type == LGHT) {
+
+		color = COLOR_LGHT;
+
+	} else if (c.type == PHOT) {
+
+		color = lightColor;
 	}
 
 	// cursor
@@ -88,6 +89,8 @@ void main() {
 			shareRect.y <= pos.y && pos.y <= shareRect.w) ) {
 		color = mix(OUTER_COLOR, color, outerOpacity);
 	}
+
 	
 	gl_FragColor = vec4(color, 1.0);
+
 }

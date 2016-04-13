@@ -32,9 +32,9 @@ class Mobile extends EventEmitter {
 		})
 
 		$('.menu__btn').on('click', () => {
-			if (state.is('draw')) {
+			if (state.current == 'draw') {
 				state.expandMenu()
-			} else if (state.is('menu')) {
+			} else if (state.current == 'menu') {
 				state.resume()
 			}
 		})

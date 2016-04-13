@@ -55,6 +55,7 @@ if ( empty($_POST['type'])
 	|| empty($_POST['thumb'])
 	|| empty($_POST['base_color']) ) {
 
+	echo 'Unco';
 	die(ERROR_JSON);
 }
 
@@ -88,14 +89,20 @@ if ( !$result ) {
 //------------------------------------------------------------
 // 1. insert DB
 
-$sql->query( "INSERT INTO gallery values(null, $type, '{$posted}', '${filenameMap}', '${filenameThumb}', $parent_id, $point)" ) or die (ERROR_JSON);
+$sql->query( "INSERT INTO gallery values(null, '${type}', '{$posted}', '${filenameMap}', '${filenameThumb}', $parent_id, $point)" ) or die (ERROR_JSON);
 $sql->close();
 
 //------------------------------------------------------------
 // Display Part
+
+$responce = [
+	'status' => 'succeed',
+	'content' => [
+		'id' => $id,
+		'url' => SITEROOT . "/${type}/${id}"
+	]
+];
+
+echo json_encode($responce);
+
 ?>
-{
-	"status": "OK",
-	"id": <?= $id ?>,
-	"url": "<?= SITEROOT . "/?n=$id" ?>"
-}

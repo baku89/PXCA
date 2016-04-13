@@ -8,13 +8,15 @@
 	left: 0%
 	width: 100%
 	height: 100%
-	background-color: rgba(42, 47, 51, 0.8)
+	background-color: rgba(34, 34, 34, 0.8)
 	z-index: 20
 	
 .layer--help,
 .layer--gallery 
 	top: -100%
 	overflow scroll
+	overflow-x hidden
+	overflow-y scroll
 	overflow-scrolling touch
 	-webkit-overflow-scrolling touch
 	transition: transform 0.5s custom-bezier
@@ -24,21 +26,15 @@
 // home
 
 .layer--home
-	top -100%
 	transition: transform 0.5s custom-bezier
+	top: -100%
 	
 	+status('home')
 		transform translateY(100%)
-
-.home
-	// background #f0f0f0
-	
-	// color c-black
 	
 .home__type-list
 	position absolute
-	left 10%
-	right 10%
+	width 100%
 	height 100%
 	display flex
 	flex-direction column
@@ -49,7 +45,7 @@
 	flex-direction column
 	justify-content center
 	position relative
-	border-bottom 1px solid c-text
+	border-bottom 2px solid #333
 	cursor pointer
 	
 	&:last-child
@@ -65,15 +61,20 @@
 		left: 0
 	
 	&:hover:before
-		background: rgba(255, 255, 255, 0.3)
+		background: rgba(255, 255, 255, 0.1)
 
 .home__type-label
 	text-align center
+	height 24px
+	line-height 24px
 	margin-bottom 10px
+	
+	+mobile()
+		margin 0
 
 .home__type-palette
 	width 100%
-	height 100%
+	height 36px
 	display flex
 	justify-content center
 
@@ -84,59 +85,6 @@
 	margin 6px
 
 
-/*
-.palette
-	position: absolute
-	top 11px
-	left: 0
-	right 0
-	height 0
-	display flex
-	justify-content center
-	z-index: 10
-
-	+mobile()
-		top: 6px
-
-	+landscape()
-		top 0
-		bottom 0
-		width 0
-		height auto
-		left 11px
-		right auto
-		flex-direction column
-		align-content center
-
-.brush
-	position: relative
-	width: 36px
-	height: 36px
-	margin: 6px
-	border: 0 solid white
-	border-radius: 18px
-	text-indent: -9999px
-	overflow: hidden
-	transform: scale(0.8)
-	transition: all 0.13s custom-bezier
-
-	&:hover 
-		transform: scale(0.85)
-
-	&:hover:before 
-		content: '\00a0'
-		display: block
-		position: absolute
-		width: 100%
-		height: 100%
-		top: 0
-		left: 0
-		background: rgba(255, 255, 255, 0.3)
-
-	&.is-active 
-		border-width: 2px
-		transform: scale(1)
-*/
 
 
 //--------------------------------------------------
@@ -191,7 +139,6 @@
 	height auto
 	display block
 
-
 //--------------------------------------------------
 // help
 
@@ -210,19 +157,24 @@
 	padding 20px
 	max-width 100%
 
+	h2,
+	h3 
+		text-align: center
+		margin-bottom: 20px
 
-.help__container h2,
-.help__container h3 
-	text-align: center
-	margin-bottom: 20px
+	h2
+		&:before,
+		&:after 
+			content: " ---------- "
+			letter-spacing: .2em
 
-.help__container h2:before,
-.help__container h2:after 
-	content: " ---------- "
-	letter-spacing: .2em
-
-.help__container p 
-	margin-bottom: 20px
+	p 
+		margin-bottom: 20px
+		
+	span 
+		display inline-block
+		border-bottom 2px solid white
+		height 26px
 
 .help__shortcut
 	+mobile()
@@ -276,19 +228,3 @@
 
 	+status('share')
 		visibility: visible
-
-// .share-frame 
-// 	position: absolute
-// 	width: 100%
-// 	height: 100%
-// 	background-color: #2a2f33
-// 	transition: all 0.5s custom-bezier
-
-// .share-frame--top 
-// 	bottom: 100%
-// .share-frame--bottom 
-// 	top: 100%
-// .share-frame--left 
-// 	right: 100%
-// .share-frame--right 
-// 	left: 100%

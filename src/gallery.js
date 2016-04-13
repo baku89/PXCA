@@ -11,7 +11,7 @@ export default class GalleryManager extends Vue {
 			data: {
 				items: [],
 				busy: false,
-				next: './api/gallery.php'
+				next: '/api/gallery.php'
 			},
 			methods: {
 				loadMore() {
@@ -33,7 +33,7 @@ export default class GalleryManager extends Vue {
 				},
 
 				loadMap(e, item) {
-					state.loadMap(item.map)
+					state.loadMap(item)
 				}
 
 			}

@@ -39,14 +39,16 @@
         <li v-for="system in systems" v-on:click.stop="changeType($event, system.type)" class="home__type-item">
           <div class="home__type-label">{{system.title}}</div>
           <ul class="home__type-palette">
-            <li v-for="brush in system.brushData" v-bind:style="{background: brush.color}" class="home__type-brush"></li>
+            <li v-for="type in system.brushes.order" v-bind:style="{background: system.brushes.list[type].color}" class="home__type-brush"></li>
           </ul>
         </li>
       </ul>
     </section>
     <canvas id="canvas" class="is-hidden"></canvas>
     <div class="loading"></div>
-    <div class="palette"></div>
+    <div class="palette">
+      <button v-for="type in brushes.order" :class="{'active': brushes.active == type}" v-on:click="changeType(type)" :style="{background: brushes.list[type].color}" class="brush"></button>
+    </div>
     <div class="layer layer--menu-darken"></div>
     <nav class="menu">
       <div class="menu__btn">
@@ -55,22 +57,20 @@
         <div class="l l3"></div>
       </div>
       <ul class="menu__lists">
-        <li><a class="menu__clear">Clear</a></li>
+        <li><a class="menu__change">Change</a></li>
         <li><a class="menu__share">Share</a></li>
         <li><a class="menu__gallery">Gallery</a></li>
+        <li><a class="menu__clear"> X </a></li>
         <li><a class="menu__help">?</a></li>
       </ul>
     </nav>
     <section class="help layer layer--help">
       <div class="help__container">
-        <h2>Fuse</h2>
-        <p>
-          This demo simulates burning fuses and exploding bombs using a method of a sort of cellular automaton(CA). Click and drag to draw a line. Select parettes on top to change brush type(<span class="fuse">fuse</span>, <span class="bomb">bomb</span>, <span class="fire">fire</span>, <span class="wall">wall</span>, <span class="ersr">eraser</span> respectively from left to right). The CA program is mainly written in GLSL.
-          
-        </p>
+        <h2>{{system.name}}</h2>
+        <p>{{{htmlHelp}}}</p>
         <h3 class="help__shortcut">Shortcuts</h3>
         <p class="help__shortcut-list">
-          [1-5]: Change <span class="fuse">B</span><span class="bomb">r</span><span class="fire">u</span><span class="wall">s</span><span class="ersr">h</span><br>
+          [1-9]: Change Brush<br>
           [↑↓ or right drag]: Change brush size<br>
           [space]: Toggle pause<br>
           [c]: Clear<br>
@@ -89,18 +89,18 @@
       <div class="paused__message">&gt; Click to Resume &lt;</div>
     </section>
     <section class="share layer layer--share">
-      <div v-bind:class="{'show': show}" class="alert">
-        <div v-show="result == 'succeed'" class="alert__wrapper--succeed">
+      <div v-bind:class="{'show': show}" v-on:click.stop="" class="alert">
+        <div v-show="status == 'succeed'" class="alert__wrapper--succeed">
           <div class="alert__content alert--succeed__content">
             <input type="text" value="{{url}}" class="alert__share-url">
-            <div class="alert__tweet"><a class="alert__tweet-link">Tweet</a></div>
+            <div class="alert__tweet"><a v-on:click="tweet()" class="alert__tweet-link">Tweet</a></div>
           </div>
           <div class="alert__choices">
-            <button v-on:click.stop="showGallery()" class="alert__btn">See Others..</button>
+            <button v-on:click="showGallery()" class="alert__btn">See Others..</button>
             <button v-on:click="resume()" class="alert__btn">Resume</button>
           </div>
         </div>
-        <div v-show="result == 'failed'" class="alert__wrapper--failed">
+        <div v-show="status == 'failed'" class="alert__wrapper--failed">
           <div class="alert__content alert--failed__content">{{message}}</div>
           <div class="alert__choices">
             <button v-on:click="resume()" class="alert__btn">Resume</button>
@@ -127,7 +127,7 @@
     
     <? if (!is_null($id)) : ?>
     	window.initialState.id = <?= $id ?>;
-    	window.initialState.map = <?= $map ?>;
+    	window.initialState.map = '<?= $map ?>';
     <? endif; ?>
     
   </script>

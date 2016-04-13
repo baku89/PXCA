@@ -65,7 +65,7 @@ body[data-orientation=landscape] .palette {
   left: 0;
   background: rgba(255,255,255,0.3);
 }
-.brush.is-active {
+.brush.active {
   border-width: 2px;
   -webkit-transform: scale(1);
   transform: scale(1);

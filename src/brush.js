@@ -1,62 +1,51 @@
 import Config from './config.js'
 
+Vue.config.debug = true
 
-export default class Brush {
+export default class Brush extends Vue {
 
-	init(system) {
-		
-		this.data = system.brushData
-		this.paletteOrder = system.paletteOrder
+	constructor() {
 
-		this.initPalette()
-		this.changeType(system.initialBrush)
+		super({
+			el: '.palette',
+			data: {
+				brushes: {
+					list: {},
+					active: null,
+					order: []
+				}
+			},
 
-		this.changeSize = this.changeSize.bind(this)
-	}
+			computed: {
+				index: function() {
+					return this.brushes.list[this.brushes.active].index
+				},
+				size: function() {
+					return this.brushes.list[this.brushes.active].size
+				},
+				size2: function() {
+					return Math.pow(this.brushes.list[this.brushes.active].size , 2)
+				},
+				brushList: function() {
+					let list = []
+					this.system.brush
+				}
+			},
 
-	initPalette() {
-
-		let $palette = $('.palette')
-
-		this.paletteOrder.forEach((key) => {
-			let brush = this.data[key]
-			let $brush = $('<button></button>')
-
-			$brush
-				.addClass('brush')
-				.css('background-color', brush.color)
-				.attr('data-type', key)
-				.on('click', () => this.changeType(key))
-
-			$palette.append($brush)
+			methods: {
+				changeType(type) {
+					this.brushes.active = type
+				}
+			}
 		})
-
-		this.$brushes = $('.brush')
 	}
 
 	changeSize(size) {
-		size = Math.max(0.5, size)
-		this.data[this.type].size = size
-		this.size = size
-		this.size2 = size * size
+		this.brushes.list[this.brushes.active].size = Math.max(0.5, size)
+	}		
+
+	changePaletteIndex(index) {
+		this.brushes.active = this.brushes.order[index]
 	}
-
-	changeIndex(index) {
-		let type = this.paletteOrder[index]
-		if (type !== undefined) {
-			this.changeType(type)
-		}
-	}
-
-	changeType(type) {
-		this.type = type
-		this.size = this.data[this.type].size
-		this.index = this.data[this.type].index
-		this.size2 = this.size * this.size
-
-		this.$brushes.removeClass('is-active')
-		this.$brushes.filter(`[data-type=${this.type}]`).addClass('is-active')
-	}
-
-
+	
 }

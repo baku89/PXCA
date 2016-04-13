@@ -19,7 +19,7 @@
   }
 }
 .alert__content {
-  background-color: #2a2f33;
+  background-color: #222;
   height: 75px;
   margin-bottom: 2px;
 }
@@ -47,7 +47,7 @@
   -ms-flex-positive: 1;
       flex-grow: 1;
   height: 100%;
-  background-color: #2a2f33;
+  background-color: #222;
   font-size: 16px;
   color: #dbdbdb;
   margin-right: 2px;
@@ -91,58 +91,4 @@
 }
 .alert__tweet-link {
   font-size: 14px;
-}
-.layer--gallery {
-  overflow: scroll;
-  -webkit-overflow-scrolling: touch;
-}
-.layer--gallery__list {
-  width: 960px;
-  max-width: 100%;
-  min-height: 100%;
-  margin: 0 auto;
-  padding: 80px 0;
-  *zoom: 1;
-}
-@media only screen and (max-width: 760px) {
-  .layer--gallery__list {
-    padding: 20px 0;
-    text-align: center;
-  }
-}
-.layer--gallery__list:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-.layer--gallery__list li {
-  position: relative;
-  float: left;
-  width: 244px;
-  height: 164px;
-  border: 2px solid #575e63;
-  margin: 38px;
-  cursor: pointer;
-  -webkit-transition: border-color 0.2s ease;
-  transition: border-color 0.2s ease;
-}
-@media only screen and (max-width: 760px) {
-  .layer--gallery__list li {
-    display: inline-block;
-    margin: 23px;
-    float: none;
-  }
-}
-.layer--gallery__list li:before {
-  content: attr(data-id);
-  position: absolute;
-  bottom: 0;
-  right: 8px;
-}
-.layer--gallery__list li:hover {
-  border-color: #dbdbdb;
-}
-.layer--gallery__list img {
-  width: 100%;
-  height: 100%;
 }

@@ -26,15 +26,17 @@ const int PLNT = 64;
 const int FIRE = 96;
 const int WATR = 128;
 
-const vec3 COLOR_BLNK		= vec3(0.0, 0.0, 0.0);
-const vec3 COLOR_SOIL		= vec3(0.5, 0.5, 0.5);
-const vec3 COLOR_PLNT		= vec3(0.0, 0.843, 0.0);
-const vec3 COLOR_FIRE_BIRTH = vec3(0.933, 0.568, 0.129);
-const vec3 COLOR_FIRE_DEATH	= vec3(0.960, 0.149, 0.380);
-const vec3 COLOR_WATR		= vec3(0.0, 0.0, 0.8);
+const vec3 COLOR_BLNK		= vec3(0.196, 0.219, 0.270);
+const vec3 COLOR_SOIL		= vec3(0.905, 0.854, 0.635);
+const vec3 COLOR_SOIL2	= vec3(0.921, 0.886, 0.788);
+const vec3 COLOR_PLNT		= vec3(0.443, 0.890, 0.478);
+const vec3 COLOR_PLNT_YOUNG	= vec3(0.709, 0.937, 0.247);
+const vec3 COLOR_FIRE_BIRTH = vec3(0.925, 0.176, 0.301);
+const vec3 COLOR_FIRE_DEATH	= vec3(0.925, 0.466, 0.392);
+const vec3 COLOR_WATR		= vec3(0.086, 0.301, 0.878);
 
 const vec3 BRUSH_HIGHLIHGT = vec3(0.1);
-const vec3 OUTER_COLOR = vec3(0.0, 0.0, 0.0);
+const vec3 OUTER_COLOR = vec3(0.133, 0.133, 0.133);
 
 //---------------------------------------------
 // functions
@@ -70,35 +72,23 @@ void main() {
 		color = COLOR_BLNK;
 
 	} else if (cell.type == SOIL) {
-		color = COLOR_SOIL;
+
+		if (mod(pos.x + 0.5 - (pos.y + 0.5) / 2.0, 3.0) < 0.1) {
+			color = COLOR_SOIL2;
+		} else {
+			color = COLOR_SOIL;
+		}
 	
 	} else if (cell.type == PLNT) {
-		color = COLOR_PLNT;
+
+		color = mix(COLOR_PLNT, COLOR_PLNT_YOUNG, cell.amp);
 
 	} else if (cell.type == FIRE) {
 		color = mix(COLOR_FIRE_BIRTH, COLOR_FIRE_DEATH, cell.amp);
 	
 	} else if (cell.type == WATR) {
 		color = COLOR_WATR;
-
 	}
-
-	// } else if ( cell.type == WALL ) {
-	// 	if (mod(pos.x + pos.y, 3.0) >= 1.0)
-	// 		color = COLOR_WALL1;
-	// 	else
-	// 		color = COLOR_WALL2;
-	
-	// } else if (cell.type == FUSE) {
-	// 	color = COLOR_FUSE;
-	
-	// } else if (cell.type == BOMB) {
-	// 	color = COLOR_BOMB;
-	
-	// } else {
-	// 	// fire
-	// 	color = mix(COLOR_FIRE_DEATH, COLOR_FIRE_BIRTH, cell.life / 255.0);
-	// }
 
 	// cursor
 	if (distanceSquared(pos, curtPos) < brushSize2) {
@@ -110,6 +100,8 @@ void main() {
 			shareRect.y <= pos.y && pos.y <= shareRect.w) ) {
 		color = mix(OUTER_COLOR, color, outerOpacity);
 	}
+
+	// color.b = cell.life;
 
 	
 	gl_FragColor = vec4(color, 1.0);

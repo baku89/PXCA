@@ -12,7 +12,6 @@ body[data-status=menu] .menu {
   .menu {
     width: 90px;
     right: 0;
-    background: #f00;
     height: 100%;
     -webkit-transform: translateX(100%);
     transform: translateX(100%);
@@ -48,7 +47,7 @@ body[data-status=menu] .menu {
   margin-top: -2px;
   margin-left: -16px;
   border-radius: 2px;
-  background-color: #d1d8db;
+  background-color: #dbdbdb;
   -webkit-transition: -webkit-transform 0.5s cubic-bezier(0.37, 0, 0.11, 1);
   transition: -webkit-transform 0.5s cubic-bezier(0.37, 0, 0.11, 1);
   transition: transform 0.5s cubic-bezier(0.37, 0, 0.11, 1);
@@ -91,7 +90,7 @@ body[data-status=menu] .menu__btn .l3 {
     -webkit-flex-direction: column;
     -ms-flex-direction: column;
     flex-direction: column;
-    background: #2a2f33;
+    background-color: #222;
   }
 }
 .menu__lists li {
@@ -108,6 +107,7 @@ body[data-status=menu] .menu__btn .l3 {
     text-align: center;
   }
 }
+.menu__lists .menu__clear,
 .menu__lists .menu__help {
   padding-left: 7px;
   padding-right: 7px;

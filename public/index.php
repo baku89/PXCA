@@ -13,11 +13,11 @@ $router->map('GET', '/', function() {
 	loadMain(null, null);
 });
 
-$router->map('GET', '/[fuse|pfw:type]', function($type) {
+$router->map('GET', '/[fuse|tri|photon:type]', function($type) {
 	loadMain($type, null);
 });
 
-$router->map('GET', '/[fuse|pfw:type]/[i:id]', function($type, $id) {
+$router->map('GET', '/[fuse|tri|photon:type]/[i:id]', function($type, $id) {
 	loadMain($type, $id);
 });
 
@@ -48,8 +48,8 @@ function loadMain($_type, $_id) {
 	$thumb = SITEROOT . '/img/ogp.jpg';
 
 	$url = SITEROOT;
-	$title = 'S a n d p i x';
-	$page_title = 'S a n d p i x';
+	$title = '::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::';
+	$page_title = '::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::';
 	$description = 'Just a pixel sandbox';
 
 	if (!is_null($type)) {

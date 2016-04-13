@@ -4,11 +4,18 @@ export default class CASystem {
 	constructor() {
 
 		this.type = null
-		this.brushData = {}
-		this.paletteOrder = {}
+		this.brushes = {
+			list: [],
+			active: null,
+			order: []
+		}
 		this.caShader = ''
 		this.filterShader = ''
 
 		this.baseColor = null
+
+		this.help = ''
+
+		this.filterUniforms = {}
 	}
 }

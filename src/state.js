@@ -12,17 +12,19 @@ class CustomFSM {
 		this.onenterstate = this.onenterstate.bind(this)
 
 		this.startup()
+
+		this.ASYNC = StateMachine.ASYNC
 	}
 
 	init() {
 		let initialState = window.initialState
-
+		
 		if (initialState.type && initialState.id) {
-			this.loadMap({
-				type: initialState.type,
-				map: initialState.map
-			})
+			this.type = initialState.type
+			this.id = initialState.id
+			this.loadMap(initialState)
 		} else if (initialState.type) {
+			this.type = initialState.type
 			this.changeType(initialState.type)
 		} else {
 			this.showHome()
@@ -31,8 +33,6 @@ class CustomFSM {
 
 	onenterstate(event, from, to, param) {
 		$body.attr('data-status', to)
-
-		console.log(event, param)
 
 		if (event == 'changeType') {
 			this.type = param
@@ -53,8 +53,10 @@ class CustomFSM {
 			this.pushHistory()
 		
 		} else if (event == 'showShare') {
-			this.id = param.id
-			this.pushHistory()
+			if (param.status == 'succeed') {
+				this.id = param.content.id
+				this.pushHistory()
+			}
 		}
 
 
@@ -73,7 +75,7 @@ class CustomFSM {
 			}
 
 		} else {
-			document.title = 'S a n d p i x'
+			document.title = '::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::'
 		}
 
 		history.replace(uri)
@@ -87,7 +89,7 @@ let state = StateMachine.create({
 	target: CustomFSM.prototype,
 	events: [
 		{name: 'changeType', 	from: ['home', 'loading'], to: 'draw'},
-		{name: 'showHome',		from: 'loading', to: 'home'},
+		{name: 'showHome',		from: ['draw', 'loading', 'menu'], to: 'home'},
 		{name: 'pause',				from: 'draw',	to: 'paused'},
 		{name: 'clear',				from: ['menu', 'draw'], to: 'draw'},
 		{name: 'resume',			from: ['loading', 'posting', 'paused', 'gallery', 'share', 'help', 'menu'], to: 'draw'},

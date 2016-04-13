@@ -13,6 +13,8 @@ import Base64Util from './base64-util.js'
 import Mobile from './mobile.js'
 import Systems from './systems.js'
 
+import Help from './help.js'
+
 const renderer = window.renderer
 const state = window.state
 const router = window.router
@@ -31,10 +33,12 @@ export default class CanvasManager {
 		this.clock = new THREE.Clock(true)
 
 		this.cursor = new Cursor(this.$canvas)
-		this.brush = new Brush()
+		this.$brush = new Brush()
 		this.pingpong = new PingpongRenderTarget()
 		
 		this.share = new Share()
+
+		this.$help = new Help()
 
 		this.renderPass = new BasePass({
 			fragmentShader: require('./shaders/passthru.frag'),
@@ -50,7 +54,6 @@ export default class CanvasManager {
 		this.clear = this.clear.bind(this)
 
 		state.onchangeType = (evt, from, to, type) => {
-			console.log('aaaa')
 			this.changeType(type)
 		}
 
@@ -58,24 +61,24 @@ export default class CanvasManager {
 
 
 		state.onleaveloading = () => {this.$canvas.removeClass('is-hidden')}
-		state.onloadMap = (event, from, to, map) => {
-			console.log(map)
-			this.loadMap(map)
+		state.onloadMap = (event, from, to, item) => {
+			this.loadMap(item)
 		}
 		state.onpostMap = this.postMap.bind(this)
 
 		this.cursor.on('size-changed', (size) => {
-			this.brush.changeSize(size)
+			this.$brush.changeSize(size)
 		})
 	}
 
 	changeType(type) {
 		let system = Systems[type]
-		console.log(`init system=${system.type}`)
 
 		this.system = system
 
-		this.brush.init(system)
+		// this.$brush.init(system)
+		this.$brush.$set('brushes', system.brushes)
+		this.$help.$set('system', system)
 
 		this.caPass = new BasePass({
 			fragmentShader: system.caShader,
@@ -97,16 +100,20 @@ export default class CanvasManager {
 		})
 		this.uniforms = this.caPass.uniforms
 
+		let filterUniforms = {
+			buffer: 		{type: 't',		value: null},
+			curtPos: 		{type: 'v2',	value: this.cursor.curtPos},
+			brushSize2:	{ type: 'f',	value: null},
+
+			shareRect:	{type: 'v4',	value: new THREE.Vector4()},
+			outerOpacity:	{ type: 'f',	value: null}
+		}
+
+		filterUniforms = Object.assign(filterUniforms, this.system.filterUniforms)
+
 		this.filterPass = new BasePass({
 			fragmentShader: system.filterShader,
-			uniforms: {
-				buffer: 		{type: 't',		value: null},
-				curtPos: 		{type: 'v2',	value: this.cursor.curtPos},
-				brushSize2:	{ type: 'f',	value: null},
-
-				shareRect:	{type: 'v4',	value: new THREE.Vector4()},
-				outerOpacity:	{ type: 'f',	value: null}
-			}
+			uniforms: filterUniforms
 		})
 		this.share.updateUniforms(this.filterPass.uniforms)
 
@@ -135,11 +142,11 @@ export default class CanvasManager {
 				break
 			default:
 				if (e.keyCode == 38) {
-					this.brush.changeSize(this.brush.size + 1)
+					this.$brush.changeSize(this.$brush.size + 1)
 				} else if (e.keyCode == 40) {
-					this.brush.changeSize(this.brush.size - 1)
+					this.$brush.changeSize(this.$brush.size - 1)
 				} else if (isKeyNumerical(key)) {
-					this.brush.changeIndex(parseInt(key)-1)
+					this.$brush.changePaletteIndex(parseInt(key)-1)
 				}
 		}
 	}
@@ -187,7 +194,11 @@ export default class CanvasManager {
 		this.render(false)
 	}
 
-	loadMap(url) {
+	loadMap(item) {
+
+		if (!this.system || this.system.type != item.type) {
+			this.changeType(item.type)
+		}
 
 		let map = new Image()
 
@@ -216,7 +227,7 @@ export default class CanvasManager {
 			console.error('CanvasManager: cannot load map')
 		}
 
-		map.src = url
+		map.src = item.map
 	}
 
 	render(isUpdateCA) {
@@ -229,8 +240,8 @@ export default class CanvasManager {
 			this.uniforms.time.value = this.clock.getElapsedTime()
 			this.uniforms.seed.value = Math.random()
 			this.uniforms.cursorMode.value = this.cursor.mode
-			this.uniforms.brushType.value = this.brush.index
-			this.uniforms.brushSize2.value = this.brush.size2
+			this.uniforms.brushType.value = this.$brush.index
+			this.uniforms.brushSize2.value = this.$brush.size2
 			this.caPass.render(this.pingpong.dst)
 
 			this.pingpong.swap()
@@ -238,7 +249,7 @@ export default class CanvasManager {
 
 		/// 2. filter
 		this.filterPass.uniforms.buffer.value = this.pingpong.dst
-		this.filterPass.uniforms.brushSize2.value = this.brush.size2
+		this.filterPass.uniforms.brushSize2.value = this.$brush.size2
 		this.filterPass.render(this.filteredTex)
 
 		// 3. render to main canvas
@@ -282,6 +293,8 @@ export default class CanvasManager {
 
 		let thumb64 = Base64Util.convertArray(pixels, w, h)
 
+		console.log('parent id =', state.id)
+
 		// 3. create data
 		$.ajax({
 			type: 'POST',
@@ -301,18 +314,14 @@ export default class CanvasManager {
 					json = JSON.parse(data)
 				} catch(e) {
 					console.error('CanvasManager: JSON parse error')
+					json = {
+						status: 'failed',
+						content: {
+							message: 'Unknown error occured.'
+						}
+					}
 				}
-
-				if (!json || json.status == 'failed') {
-					this.share.showAlertFailed('Sorry')
-					return
-				}
-
-				state.showShare('succeed', {
-					url: json.url,
-					id: json.id
-				})
-
+				state.showShare(json)
 			}
 
 		})

@@ -1,13 +1,5 @@
 import ticker from 'ticker'
 
-/*
-import Config from './config.js'
-
-import Mobile from './mobile.js'
-
-
-*/
-
 import Navigation from './navigation.js'
 import Home from './home.js'
 import Gallery from './gallery.js'
@@ -34,12 +26,18 @@ export default class App {
 		state.onleavedraw = () => {
 			this.isDraw = false
 		}
+		state.onenterhome = () => {
+			this.playTicker = false
+		}
+		state.onlevehome = () => {
+			this.playTicker = true
+		}
 
 		document.oncontextmenu = () => false
 
 		state.init()
 
-		ticker(window, 50).on('tick', this.draw.bind(this))
+		ticker($('#canvas')[0], 50).on('tick', this.draw.bind(this))
 		
 	}
 
