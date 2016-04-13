@@ -1,3 +1,6 @@
+precision mediump float;
+precision mediump int;
+
 #pragma glslify: distanceSquared = require(../../shaders/distance-squared.glsl)
 
 //---------------------------------------------

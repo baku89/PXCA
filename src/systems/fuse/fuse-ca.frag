@@ -1,3 +1,6 @@
+precision mediump float;
+precision mediump int;
+
 #pragma glslify: random = require(glsl-random) 
 #pragma glslify: innerSegment2 = require(../../shaders/inner-segment2.glsl)
 
