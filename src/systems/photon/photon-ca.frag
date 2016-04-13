@@ -189,8 +189,7 @@ void main() {
 			if (hueDivide > 0.0) {
 				c.hue = fract(hue / hueDivide);
 			}
-
-			// fade out wall
+			
 			energy = max(0.0, energy - 4.0);
 			c.dir = int(energy * 255.0 + 0.5);
 
