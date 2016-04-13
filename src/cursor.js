@@ -71,18 +71,41 @@ export default class Cursor extends EventEmitter {
 			// mobile
 			'touchstart': (e) => {
 				e.preventDefault()
-				this.mode = Mode.DRAW
-				this.updateCoord(
-					e.originalEvent.touches[0].pageX,
-					e.originalEvent.touches[0].pageY,
-					true)
+				let oe = e.originalEvent
+
+				if (oe.touches.length == 1) {
+					this.mode = Mode.DRAW
+					this.updateCoord(
+						e.originalEvent.touches[0].pageX,
+						e.originalEvent.touches[0].pageY,
+						true)
+				} else if (oe.touches.length == 2) {
+					this.mode = Mode.SIZING
+				}
 			},
 
 			'touchmove': (e) => {
 				e.preventDefault()
-				this.updateCoord(
-					e.originalEvent.touches[0].pageX,
-					e.originalEvent.touches[0].pageY)
+				if (this.mode == Mode.SIZING) {
+					let t = e.originalEvent.touches
+					let size = Math.sqrt(
+						Math.pow(t[0].pageX - t[1].pageX, 2) +
+						Math.pow(t[0].pageY - t[1].pageY, 2))
+
+					size /= Config.CELL_WIDTH * 16
+
+					this.emit('size-changed', size)
+
+					this.updateCoord(
+						(t[0].pageX + t[1].pageX) / 2,
+						(t[0].pageY + t[1].pageY) / 2)
+
+
+				} else {
+					this.updateCoord(
+						e.originalEvent.touches[0].pageX,
+						e.originalEvent.touches[0].pageY)
+				}
 			},
 
 			'touchend': (e) => {
