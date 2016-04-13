@@ -12,8 +12,6 @@ const Mode = {
 	SIZING: 2
 }
 
-
-
 export default class Cursor extends EventEmitter {
 
 	constructor($canvas) {
