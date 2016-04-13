@@ -31,8 +31,19 @@ class CustomFSM {
 		}
 	}
 
+	togglePause() {
+		if (this.current == 'draw')
+			this.pause()
+		else
+			this.resume()
+	}
+
 	onenterstate(event, from, to, param) {
 		$body.attr('data-status', to)
+	}
+
+	// update url
+	onafterevent(event, from, to, param) {
 
 		if (event == 'changeType') {
 			this.type = param
@@ -59,12 +70,11 @@ class CustomFSM {
 			}
 		}
 
-
 	}
 
 	pushHistory() {
 
-		let uri = ''
+		let uri = '/'
 
 		if (this.type) {
 			uri += this.type
@@ -78,7 +88,9 @@ class CustomFSM {
 			document.title = '::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::'
 		}
 
-		history.replace(uri)
+		history.push({
+			pathname: uri
+		})
 	}
 
 }
@@ -89,15 +101,15 @@ let state = StateMachine.create({
 	target: CustomFSM.prototype,
 	events: [
 		{name: 'changeType', 	from: ['home', 'loading'], to: 'draw'},
-		{name: 'showHome',		from: ['draw', 'loading', 'menu'], to: 'home'},
+		{name: 'clear',				from: ['paused', 'cmenu', 'draw'], to: 'draw'},
 		{name: 'pause',				from: 'draw',	to: 'paused'},
-		{name: 'clear',				from: ['menu', 'draw'], to: 'draw'},
 		{name: 'resume',			from: ['loading', 'posting', 'paused', 'gallery', 'share', 'help', 'menu'], to: 'draw'},
 		{name: 'expandMenu', 	from: 'draw', to: 'menu'},
-		{name: 'showGallery', from: ['draw', 'menu', 'share'], to: 'gallery'},
-		{name: 'showHelp',		from: ['draw', 'menu'], to: 'help'},
-		{name: 'postMap',			from: ['draw', 'menu'], to: 'posting'},
+		{name: 'showHome',		from: ['paused', 'draw', 'loading', 'menu'], to: 'home'},
+		{name: 'showGallery', from: ['paused', 'draw', 'menu', 'share'], to: 'gallery'},
+		{name: 'showHelp',		from: ['paused', 'draw', 'menu'], to: 'help'},
 		{name: 'showShare',		from: 'posting', to: 'share'},
+		{name: 'postMap',			from: ['paused', 'draw', 'menu'], to: 'posting'},
 		{name: 'loadMap',			from: ['loading', 'gallery'], to: 'loading'},
 		{name: 'previewMap',	from: 'loading', to: 'paused'}
 	]

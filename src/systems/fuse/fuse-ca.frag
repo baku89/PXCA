@@ -17,6 +17,7 @@ uniform vec2 curtPos;
 uniform float brushSize2;
 uniform int 	brushType;
 uniform int 	cursorMode;
+uniform int 	isUpdateCA;
 
 varying vec2 vUv;
 
@@ -120,7 +121,7 @@ void main() {
 		else if (brushType == BLNK) c = CELL_BLNK;
 		else if (brushType == WALL) c = CELL_WALL;
 
-	} else {
+	} else if (isUpdateCA == 1) {
 
 		if (c.type == BLNK) {
 

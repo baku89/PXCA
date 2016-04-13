@@ -1,7 +1,6 @@
 precision mediump float;
 precision mediump int;
 
-uniform vec2 resolution;
 attribute vec3 position;
 attribute vec2 uv;
 

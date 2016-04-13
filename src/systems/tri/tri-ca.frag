@@ -19,6 +19,7 @@ uniform vec2 curtPos;
 uniform float brushSize2;
 uniform int 	brushType;
 uniform int 	cursorMode;
+uniform int 	isUpdateCA;
 
 varying vec2 vUv;
 
@@ -101,7 +102,7 @@ void main() {
 		else if (brushType == WATR) c = CELL_WATR;
 		else if (brushType == SOIL) c = CELL_SOIL;
 
-	} else {
+	} else if (isUpdateCA == 1) {
 
 		
 		vec3 neuman = vec3(0.0, 0.0, 0.0);
@@ -119,17 +120,6 @@ void main() {
 		diag += getTypeCount(-dx, -dy);
 
 		vec3 moore = neuman + diag;
-		// vec3 moore = vec3(0.0);
-
-		// moore += getTypeCount(0.0, -dy);
-		// moore += getTypeCount( dx, 0.0);
-		// moore += getTypeCount(0.0,  dy);
-		// moore += getTypeCount(-dx, 0.0);
-
-		// moore += getTypeCount( dx, -dy);
-		// moore += getTypeCount( dx,  dy);
-		// moore += getTypeCount(-dx,  dy);
-		// moore += getTypeCount(-dx, -dy);
 
 		if (c.type == BLNK) {
 

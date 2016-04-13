@@ -20,12 +20,6 @@ export default class App {
 
 		this.navigation = new Navigation()
 
-		state.onenterdraw = () => {
-			this.isDraw = true
-		}
-		state.onleavedraw = () => {
-			this.isDraw = false
-		}
 		state.onenterhome = () => {
 			this.playTicker = false
 		}
@@ -37,11 +31,13 @@ export default class App {
 
 		state.init()
 
-		ticker($('#canvas')[0], 50).on('tick', this.draw.bind(this))
+		ticker($('#canvas')[0], 50).on('draw', this.draw.bind(this))
+
+		window.tick = ticker
 		
 	}
 
 	draw() {
-		this.canvas.render(this.isDraw)
+		this.canvas.render()
 	}
 }

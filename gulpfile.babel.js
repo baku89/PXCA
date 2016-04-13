@@ -55,7 +55,7 @@ gulp.task('jade', () => {
 
 //==================================================
 gulp.task('stylus', () => {
-	return gulp.src('./src/**/*.styl')
+	return gulp.src('./src/style.styl')
 		.pipe($.plumber())
 		.pipe($.stylus({use: [require('nib')()]}))
 		.pipe($.autoprefixer())

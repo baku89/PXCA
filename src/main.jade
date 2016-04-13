@@ -44,7 +44,9 @@ body()
 						li.home__type-brush(v-for='type in system.brushes.order' v-bind:style='{background: system.brushes.list[type].color}')
 
 
-		canvas#canvas.is-hidden
+		.canvas(v-on:click='test')
+			canvas#canvas.is-hidden
+			.canvas__paused Click here to resume
 
 		.loading
 
@@ -91,8 +93,8 @@ body()
 					created by <a href="http://baku89.com" target="_blank">baku</a>
 			
 
-		section.paused.layer.layer--paused
-			.paused__message &gt; Click to Resume &lt;
+		//- section.paused.layer.layer--paused
+		//- 	.paused__message &gt; Click to Resume &lt;
 
 		section.share.layer.layer--share
 

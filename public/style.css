@@ -177,6 +177,14 @@ body[data-status=posting] .loading {
   min-width: 960px;
   min-height: 720px;
 }
+.canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair !important;
+}
 #canvas {
   position: absolute;
   top: 0;
@@ -195,6 +203,26 @@ body[data-orientation=portrait] #canvas {
 }
 #canvas.is-hidden {
   visibility: hidden;
+}
+.canvas__paused {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 16px;
+  width: 180px;
+  height: 32px;
+  margin: -16px 0 0 -90px;
+  line-height: 32px;
+  background-color: rgba(34,34,34,0.6);
+  text-align: center;
+  visibility: hidden;
+}
+body[data-status=paused] .canvas__paused {
+  visibility: visible;
+}
+body[data-status=paused] .canvas__paused:hover {
+  background-color: rgba(219,219,219,0.4);
+  cursor: pointer !important;
 }
 .layer {
   position: absolute;
@@ -449,33 +477,6 @@ body[data-status=help] .layer--help {
   text-align: right;
   font-size: 14px;
 }
-.layer--paused {
-  visibility: hidden;
-  opacity: 0;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-  filter: alpha(opacity=0);
-  -webkit-transition: opacity 0.2s ease, visibility 0s linear 0.5s;
-  transition: opacity 0.2s ease, visibility 0s linear 0.5s;
-}
-body[data-status=paused] .layer--paused {
-  visibility: visible;
-  opacity: 1;
-  -ms-filter: none;
-  -webkit-filter: none;
-          filter: none;
-  -webkit-transition: opacity 0.2s ease, visibility 0s linear 0s;
-  transition: opacity 0.2s ease, visibility 0s linear 0s;
-}
-.paused__message {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 200px;
-  height: 30px;
-  margin-left: -100px;
-  margin-top: -15px;
-  text-align: center;
-}
 .layer--share {
   background-color: transparent;
   overflow: hidden;
@@ -558,7 +559,7 @@ body[data-orientation=landscape] .palette {
 }
 .menu {
   position: absolute;
-  top: 0;
+  top: 28px;
   right: 20px;
   z-index: 15;
 }
@@ -653,8 +654,9 @@ body[data-status=menu] .menu__btn .l3 {
 }
 .menu__lists li {
   margin-left: 13px;
-  line-height: 70px;
+  line-height: 14px;
   font-size: 14px;
+  height: 14px;
 }
 @media only screen and (max-width: 760px) {
   .menu__lists li {

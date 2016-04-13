@@ -44,7 +44,10 @@
         </li>
       </ul>
     </section>
-    <canvas id="canvas" class="is-hidden"></canvas>
+    <div v-on:click="test" class="canvas">
+      <canvas id="canvas" class="is-hidden"></canvas>
+      <div class="canvas__paused">Click here to resume</div>
+    </div>
     <div class="loading"></div>
     <div class="palette">
       <button v-for="type in brushes.order" :class="{'active': brushes.active == type}" v-on:click="changeType(type)" :style="{background: brushes.list[type].color}" class="brush"></button>
@@ -84,9 +87,6 @@
           
         </p>
       </div>
-    </section>
-    <section class="paused layer layer--paused">
-      <div class="paused__message">&gt; Click to Resume &lt;</div>
     </section>
     <section class="share layer layer--share">
       <div v-bind:class="{'show': show}" v-on:click.stop="" class="alert">

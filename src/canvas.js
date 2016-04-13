@@ -24,15 +24,16 @@ const isKeyNumerical = function(key) {
 	return reKeyNumerical.exec(key) != null
 }
 
-export default class CanvasManager {
+export default class Canvas {
 	
 	constructor() {
 
+		this.$canvasWrapper = $('.canvas')
 		this.$canvas = $('#canvas')
 
 		this.clock = new THREE.Clock(true)
 
-		this.cursor = new Cursor(this.$canvas)
+		this.cursor = new Cursor(this.$canvasWrapper)
 		this.$brush = new Brush()
 		this.pingpong = new PingpongRenderTarget()
 		
@@ -47,28 +48,71 @@ export default class CanvasManager {
 			}
 		})
 
+		$('.canvas__paused').on({
+			click: () => {
+				state.resume()
+			},
+			mousedown: (e) => {
+				e.stopPropagation()
+			}
+		})
+
+		// uniforms
+		this.uniforms = {
+			resolution: {type: 'v2', value: new THREE.Vector2()},
+			time: 			{type: 'f',	 value: this.clock.getElapsedTime()},
+			seed: 			{type: 'f',  value: 0},
+			dx: 				{type: 'f',	 value: null},
+			dy: 				{type: 'f',	 value: null},
+
+			buffer: 		{type: 't',  value: null},
+			prevPos:  	{type: 'v2', value: this.cursor.prevPos},
+			curtPos: 		{type: 'v2', value: this.cursor.curtPos},
+			cursorMode:	{ type: 'i',	value: 0},
+
+			brushType: 		{ type: 'i', value: null},
+			brushSize2: 	{ type: 'f', value: null},
+			isUpdateCA: 	{ type: 'i', value: state.current == 'draw' ? 1 : 0}
+		}
+
+		this.filterUniforms = {
+			buffer: 		{type: 't',		value: null},
+			curtPos: 		{type: 'v2',	value: this.cursor.curtPos},
+			brushSize2:	{ type: 'f',	value: null},
+			shareRect:	{type: 'v4',	value: new THREE.Vector4()},
+			outerOpacity:	{ type: 'f',	value: null}
+		}
+
 		// event
-		$(window).on('throttledresize', this.onResize.bind(this))
-		$(window).on('keyup', this.onKeyup.bind(this))
+		$(window).on({
+			'throttledresize': this.onResize.bind(this),
+			'keyup': this.onKeyup.bind(this)
+		})
+
+		this.cursor.on('size-changed', (size) => {
+			this.$brush.changeSize(size)
+		})
 
 		this.clear = this.clear.bind(this)
+
+		state.onclear = this.clear.bind(this)
+		state.onpostMap = this.postMap.bind(this)
 
 		state.onchangeType = (evt, from, to, type) => {
 			this.changeType(type)
 		}
 
-		state.onclear = this.clear.bind(this)
-
-
 		state.onleaveloading = () => {this.$canvas.removeClass('is-hidden')}
 		state.onloadMap = (event, from, to, item) => {
 			this.loadMap(item)
 		}
-		state.onpostMap = this.postMap.bind(this)
-
-		this.cursor.on('size-changed', (size) => {
-			this.$brush.changeSize(size)
-		})
+		
+		state.onenterdraw = () => {
+			if (this.uniforms) this.uniforms.isUpdateCA.value = 1
+		}
+		state.onleavedraw = () => {
+			if (this.uniforms) this.uniforms.isUpdateCA.value = 0
+		}
 	}
 
 	changeType(type) {
@@ -82,34 +126,10 @@ export default class CanvasManager {
 
 		this.caPass = new BasePass({
 			fragmentShader: system.caShader,
-			uniforms: {
-				resolution: {type: 'v2', value: new THREE.Vector2()},
-				time: 			{type: 'f',	 value: this.clock.getElapsedTime()},
-				seed: 			{type: 'f',  value: 0},
-				dx: 				{type: 'f',	 value: null},
-				dy: 				{type: 'f',	 value: null},
-
-				buffer: 		{type: 't',  value: null},
-				prevPos:  	{type: 'v2', value: this.cursor.prevPos},
-				curtPos: 		{type: 'v2', value: this.cursor.curtPos},
-				cursorMode:		{ type: 'i',	value: 0},
-
-				brushType: 		{ type: 'i', value: null},
-				brushSize2: 	{ type: 'f', value: null}
-			}
+			uniforms: this.uniforms
 		})
-		this.uniforms = this.caPass.uniforms
 
-		let filterUniforms = {
-			buffer: 		{type: 't',		value: null},
-			curtPos: 		{type: 'v2',	value: this.cursor.curtPos},
-			brushSize2:	{ type: 'f',	value: null},
-
-			shareRect:	{type: 'v4',	value: new THREE.Vector4()},
-			outerOpacity:	{ type: 'f',	value: null}
-		}
-
-		filterUniforms = Object.assign(filterUniforms, this.system.filterUniforms)
+		let filterUniforms = Object.assign(this.filterUniforms, this.system.filterUniforms)
 
 		this.filterPass = new BasePass({
 			fragmentShader: system.filterShader,
@@ -126,10 +146,7 @@ export default class CanvasManager {
 
 		switch (key) {
 			case ' ': // Space
-				if (state.current == 'draw')
-					state.pause()
-				else
-					state.resume()
+				state.togglePause()
 				break	
 			case 'S':
 				state.postMap()
@@ -217,7 +234,7 @@ export default class CanvasManager {
 			texture.magFilter = THREE.NearestFilter
 			this.pingpong.resetByTexture(texture)
 
-			this.render(false)
+			this.render()
 
 			state.previewMap()
 		}
@@ -230,22 +247,23 @@ export default class CanvasManager {
 		map.src = item.map
 	}
 
-	render(isUpdateCA) {
+	render() {
+
+		if (!this.system)
+			return
 
 		// 1. update CA
-		if (isUpdateCA) {
-			this.uniforms.buffer.value = this.pingpong.src
-			this.cursor.update()
+		this.uniforms.buffer.value = this.pingpong.src
+		this.cursor.update()
 
-			this.uniforms.time.value = this.clock.getElapsedTime()
-			this.uniforms.seed.value = Math.random()
-			this.uniforms.cursorMode.value = this.cursor.mode
-			this.uniforms.brushType.value = this.$brush.index
-			this.uniforms.brushSize2.value = this.$brush.size2
-			this.caPass.render(this.pingpong.dst)
+		this.uniforms.time.value = this.clock.getElapsedTime()
+		this.uniforms.seed.value = Math.random()
+		this.uniforms.cursorMode.value = this.cursor.mode
+		this.uniforms.brushType.value = this.$brush.index
+		this.uniforms.brushSize2.value = this.$brush.size2
+		this.caPass.render(this.pingpong.dst)
 
-			this.pingpong.swap()
-		}
+		this.pingpong.swap()
 
 		/// 2. filter
 		this.filterPass.uniforms.buffer.value = this.pingpong.dst
@@ -292,8 +310,6 @@ export default class CanvasManager {
 		this.filteredTex.readPixels(x, y, w, h, pixels)
 
 		let thumb64 = Base64Util.convertArray(pixels, w, h)
-
-		console.log('parent id =', state.id)
 
 		// 3. create data
 		$.ajax({

@@ -14,14 +14,16 @@ const Mode = {
 
 export default class Cursor extends EventEmitter {
 
-	constructor($canvas) {
+	constructor() {
 		super()
+
+		this.$region = $('.canvas')
+
 		// public
 		this.curtPos = new THREE.Vector2()
 		this.prevPos = new THREE.Vector2()
 
 		// private
-		this.$canvas = $canvas
 		this.coord = new THREE.Vector2()
 		this.mode = Mode.NONE
 		// this.mode = Mode.none
@@ -32,7 +34,7 @@ export default class Cursor extends EventEmitter {
 			this.isPortrait = orientation == 'portrait'
 		})
 
-		this.$canvas.on({
+		this.$region.on({
 
 			'mousedown': (e) => {
 				if (e.button == 2) {

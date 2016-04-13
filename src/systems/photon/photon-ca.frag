@@ -1,3 +1,6 @@
+precision mediump float;
+precision mediump int;
+
 #pragma glslify: random = require(glsl-random) 
 #pragma glslify: innerSegment2 = require(../../shaders/inner-segment2.glsl)
 
@@ -16,6 +19,7 @@ uniform vec2 curtPos;
 uniform float brushSize2;
 uniform int 	brushType;
 uniform int 	cursorMode;
+uniform int 	isUpdateCA;
 
 varying vec2 vUv;
 
@@ -111,7 +115,7 @@ void main() {
 		else if (brushType == MIRR) c = CELL_MIRR;
 		else if (brushType == LGHT)	c = CELL_LGHT;
 
-	} else {
+	} else if (isUpdateCA == 1) {
 
 		// propagate photon
 		if (c.type == BLNK || c.type == PHOT) {

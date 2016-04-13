@@ -2,7 +2,6 @@ precision mediump float;
 precision mediump int;
 
 #pragma glslify: distanceSquared = require(../../shaders/distance-squared.glsl)
-#pragma glslify: hsv2rgb = require(glsl-hsv2rgb)
 
 //---------------------------------------------
 
@@ -60,7 +59,7 @@ void main() {
 	Cell c = decode();
 	vec3 color = vec3(0.0);
 
-	vec3 lightColor = texture2D(rainbow, vec2(c.hue, 0.0)).rgb;//hsv2rgb(vec3(floor(c.hue * 24.0) / 24.0, 1.0, 1.0));
+	vec3 lightColor = texture2D(rainbow, vec2(c.hue, 0.0)).rgb;
 	
 	if (c.type == BLNK) {
 		color = COLOR_BLNK;

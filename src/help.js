@@ -4,15 +4,17 @@ export default class Help extends Vue {
 
 	constructor() {
 		super({
-			el: '.help',
-			data: {
-				system: {
-					brushes: {
-						list: {},
-						order: []
-					},
-					name: '',
-					help: ''
+			// el: '.help',
+			data: function() {
+				return {
+					system: {
+						brushes: {
+							list: {},
+							order: []
+						},
+						name: '',
+						help: ''
+					}
 				}
 			},
 			computed: {
