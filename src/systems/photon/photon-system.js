@@ -13,8 +13,8 @@ class PhotonSystem extends CASystem {
 		this.brushes = {
 			list: {
 				blnk: {name: 'Eraser',	color: '#BB4AA3', index:   0,	size: Config.PC ? 5.0 : 5.0},
-				wall: {name: 'Wall',		color: '#3C34A7', index:  32,	size: Config.PC ? 3.0 : 3.0},
-				mirr: {name: 'Mirror',	color: '#C2E0EB', index:  64,	size: Config.PC ? 3.0 : 3.0},
+				mirr: {name: 'Mirror',	color: '#C2E0EB', index:  32,	size: Config.PC ? 3.0 : 3.0},
+				wall: {name: 'Wall',		color: '#3C34A7', index:  64,	size: Config.PC ? 3.0 : 3.0},
 				lght: {name: 'Light',		color: '#ffffff', index:  96,	size: Config.PC ? 1 : 1}
 			},
 			active: 'lght',

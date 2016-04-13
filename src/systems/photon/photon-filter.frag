@@ -21,19 +21,19 @@ varying vec2 vUv;
 
 struct Cell {
 	int type;
-	int dir;
+	float energy;
 	float hue;
 };
 
 const int BLNK = 0;
-const int WALL = 32;
-const int MIRR = 64;
+const int MIRR = 32;
+const int WALL = 64;
 const int LGHT = 96;
 const int PHOT = 128;
 
 const vec3 COLOR_BLNK		= vec3(0.184, 0.152, 0.211);
-const vec3 COLOR_WALL		= vec3(0.270, 0.207, 0.356);
 const vec3 COLOR_MIRR		= vec3(0.760, 0.878, 0.921);
+const vec3 COLOR_WALL		= vec3(0.270, 0.207, 0.356);
 const vec3 COLOR_LGHT		= vec3(1.0, 1.0, 1.0);
 
 const vec3 BRUSH_HIGHLIHGT = vec3(0.1);
@@ -46,11 +46,10 @@ Cell decode() {
 	vec3 v = texture2D(buffer, vUv).rgb;
 	return Cell(
 		int(v.r * 255.0 + 0.5),
-		int(v.g * 255.0 + 0.5),
+		v.g,
 		v.b
 	);
 }
-
 
 void main() {
 
@@ -65,19 +64,15 @@ void main() {
 		color = COLOR_BLNK;
 
 	} else if (c.type == WALL) {
-
-		color = mix(COLOR_WALL, lightColor, float(c.dir) / 255.0);
+		color = mix(COLOR_WALL, lightColor, c.energy / 1.5);
 
 	} else if (c.type == MIRR) {
-
 		color = COLOR_MIRR;
 	
 	} else if (c.type == LGHT) {
-
 		color = COLOR_LGHT;
 
 	} else if (c.type == PHOT) {
-
 		color = lightColor;
 	}
 

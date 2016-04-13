@@ -33,11 +33,10 @@ struct Cell {
 };
 
 const int BLNK = 0;
-const int WALL = 32;
-const int MIRR = 64;
+const int MIRR = 32;
+const int WALL = 64;
 const int LGHT = 96;
 const int PHOT = 128;
-// const int WATR = 128;
 
 const int DIR_TR 			= 4;
 const int DIR_BR 			= 8;
@@ -45,12 +44,12 @@ const int DIR_BL 			= 16;
 const int DIR_TL			= 32;
 const int DIR_UNI				= 60;
 
-//                      			[type][dir][hue]
-const Cell CELL_BLNK = Cell(BLNK,	0,		0.0);
-const Cell CELL_WALL = Cell(WALL,	0,		0.0);
-const Cell CELL_MIRR = Cell(MIRR,	0,		0.0);
-const Cell CELL_LGHT = Cell(LGHT,	DIR_UNI,		0.0);
-const Cell CELL_PHOT = Cell(PHOT,	0,	  0.0);
+//                      		[type][dir]			[hue]
+const Cell CELL_BLNK = Cell(BLNK,	0,				0.0);
+const Cell CELL_MIRR = Cell(MIRR,	0,				0.0);
+const Cell CELL_WALL = Cell(WALL,	0,				0.0);
+const Cell CELL_LGHT = Cell(LGHT,	DIR_UNI,	0.0);
+const Cell CELL_PHOT = Cell(PHOT,	0,	  		0.0);
 
 //---------------------------------------------
 // functions
@@ -177,16 +176,23 @@ void main() {
 
 		} else if (c.type == WALL) {
 
-			c.hue = 0.0;
+			float energy = float(c.dir) / 255.0;
+			float hue = 0.0;
 			float hueDivide = 0.0;
 
-			if (tc.type == PHOT) {c.hue += tc.hue; c.dir = 255; hueDivide += 1.0;}
-			if (rc.type == PHOT) {c.hue += rc.hue; c.dir = 255; hueDivide += 1.0;}
-			if (bc.type == PHOT) {c.hue += bc.hue; c.dir = 255; hueDivide += 1.0;}
-			if (lc.type == PHOT) {c.hue += lc.hue; c.dir = 255; hueDivide += 1.0;}
+			if (tc.type == PHOT) {hue += tc.hue; energy = 1.0; hueDivide += 1.0;}
+			if (rc.type == PHOT) {hue += rc.hue; energy = 1.0; hueDivide += 1.0;}
+			if (bc.type == PHOT) {hue += bc.hue; energy = 1.0; hueDivide += 1.0;}
+			if (lc.type == PHOT) {hue += lc.hue; energy = 1.0; hueDivide += 1.0;}
 
-			c.hue = fract(c.hue / hueDivide);
-			c.dir = int(max(0.0, float(c.dir) - 4.0));
+
+			if (hueDivide > 0.0) {
+				c.hue = fract(hue / hueDivide);
+			}
+
+			// fade out wall
+			energy = max(0.0, energy - 4.0);
+			c.dir = int(energy * 255.0 + 0.5);
 
 		}
 	}
