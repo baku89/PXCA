@@ -65,6 +65,7 @@ void main() {
 
 	} else if (c.type == WALL) {
 		color = mix(COLOR_WALL, lightColor, c.energy / 1.5);
+		// color = vec3(c.energy);
 
 	} else if (c.type == MIRR) {
 		color = COLOR_MIRR;

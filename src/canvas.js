@@ -31,7 +31,7 @@ export default class Canvas {
 		this.$canvasWrapper = $('.canvas')
 		this.$canvas = $('#canvas')
 
-		this.clock = new THREE.Clock(true)
+		// this.clock = new THREE.Clock(true)
 
 		this.cursor = new Cursor(this.$canvasWrapper)
 		this.$brush = new Brush()
@@ -60,7 +60,7 @@ export default class Canvas {
 		// uniforms
 		this.uniforms = {
 			resolution: {type: 'v2', value: new THREE.Vector2()},
-			time: 			{type: 'f',	 value: this.clock.getElapsedTime()},
+			time: 			{type: 'f',	 value: 0},
 			seed: 			{type: 'f',  value: 0},
 			dx: 				{type: 'f',	 value: null},
 			dy: 				{type: 'f',	 value: null},
@@ -256,7 +256,7 @@ export default class Canvas {
 		this.uniforms.buffer.value = this.pingpong.src
 		this.cursor.update()
 
-		this.uniforms.time.value = this.clock.getElapsedTime()
+		this.uniforms.time.value += 1
 		this.uniforms.seed.value = Math.random()
 		this.uniforms.cursorMode.value = this.cursor.mode
 		this.uniforms.brushType.value = this.$brush.index

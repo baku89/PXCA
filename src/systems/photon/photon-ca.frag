@@ -85,7 +85,10 @@ vec4 encode(Cell c) {
 }
 
 bool movePhoton(Cell c, int dir) {
-	return c.type >= LGHT && mod(float(c.dir / dir), 2.0) > 0.0;
+	return (c.type == PHOT || (c.type == LGHT && mod(time, 16.0) < 1.0))
+		&& mod(float(c.dir / dir), 2.0) > 0.0;
+	// return c.type >= LGHT && mod(float(c.dir / dir), 2.0) > 0.0;
+
 }
 
 bool comeFrom(int target, int dir) {
@@ -104,7 +107,7 @@ void main() {
 	Cell c = decode();
 
 	float rand0 = fract(random(gl_FragCoord.xy + vec2(seed)));
-	float rand1 = fract(random(gl_FragCoord.xy + vec2(time + seed)));
+	float rand1 = fract(random(gl_FragCoord.xy + vec2(time * 1000.0 + seed)));
 
 	if (cursorMode == 1 && innerSegment2(pos, prevPos, curtPos, brushSize2)) {
 
@@ -180,17 +183,17 @@ void main() {
 			float hue = 0.0;
 			float hueDivide = 0.0;
 
-			if (tc.type == PHOT) {hue += tc.hue; energy = 1.0; hueDivide += 1.0;}
-			if (rc.type == PHOT) {hue += rc.hue; energy = 1.0; hueDivide += 1.0;}
-			if (bc.type == PHOT) {hue += bc.hue; energy = 1.0; hueDivide += 1.0;}
-			if (lc.type == PHOT) {hue += lc.hue; energy = 1.0; hueDivide += 1.0;}
+			if (tc.type >= LGHT) {hue += tc.hue; energy = 1.0; hueDivide += 1.0;}
+			if (rc.type >= LGHT) {hue += rc.hue; energy = 1.0; hueDivide += 1.0;}
+			if (bc.type >= LGHT) {hue += bc.hue; energy = 1.0; hueDivide += 1.0;}
+			if (lc.type >= LGHT) {hue += lc.hue; energy = 1.0; hueDivide += 1.0;}
 
 
 			if (hueDivide > 0.0) {
 				c.hue = fract(hue / hueDivide);
 			}
 			
-			energy = max(0.0, energy - 4.0);
+			energy = max(0.0, energy - 0.1);
 			c.dir = int(energy * 255.0 + 0.5);
 
 		}
