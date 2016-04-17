@@ -1,4 +1,3 @@
-//- include ./jade/_header.php
 doctype html
 head
 	base(href='./')
@@ -44,13 +43,13 @@ body()
 						li.home__type-brush(v-for='type in system.brushes.order' v-bind:style='{background: system.brushes.list[type].color}')
 
 
-		.canvas(v-on:click='test')
+		.canvas
 			canvas#canvas.is-hidden
 			.canvas__paused Click here to resume
 
 		.loading
 
-		.palette
+		.palette(v-cloak='')
 			button.brush(
 				v-for='type in brushes.order'
 				:class="{'active': brushes.active == type}"
@@ -81,20 +80,21 @@ body()
 				
 				h3.help__shortcut Shortcuts
 				
-				p.help__shortcut-list.
+				p.help__shortcut-list.help__shortcut-list--pc.
 					[1-9]: Change Brush<br>
 					[↑↓ or right drag]: Change brush size<br>
 					[space]: Toggle pause<br>
 					[c]: Clear<br>
 					[s]: Share<br>
 					[g]: Gallery<br>
+
+				p.help__shortcut-list.help__shortcut-list--mobile.
+					[pinch]: Change brush size<br>
+					[shake]: Clear<br>
+					[3-finger tap]: Toggle pause<br>
 				
 				p.help__credit.
 					created by <a href="http://baku89.com" target="_blank">baku</a>
-			
-
-		//- section.paused.layer.layer--paused
-		//- 	.paused__message &gt; Click to Resume &lt;
 
 		section.share.layer.layer--share
 

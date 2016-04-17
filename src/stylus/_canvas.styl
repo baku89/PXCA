@@ -42,10 +42,11 @@
 	background-color rgba(c-black, 0.6)
 	text-align center
 	visibility hidden
+	cursor pointer
+	z-index 100
 		
 	+status('paused')
 		visibility visible
 		
 		&:hover
 			background-color rgba(c-text, 0.4)
-			cursor pointer !important

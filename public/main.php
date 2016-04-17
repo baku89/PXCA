@@ -44,12 +44,12 @@
         </li>
       </ul>
     </section>
-    <div v-on:click="test" class="canvas">
+    <div class="canvas">
       <canvas id="canvas" class="is-hidden"></canvas>
       <div class="canvas__paused">Click here to resume</div>
     </div>
     <div class="loading"></div>
-    <div class="palette">
+    <div v-cloak="" class="palette">
       <button v-for="type in brushes.order" :class="{'active': brushes.active == type}" v-on:click="changeType(type)" :style="{background: brushes.list[type].color}" class="brush"></button>
     </div>
     <div class="layer layer--menu-darken"></div>
@@ -72,7 +72,7 @@
         <h2>{{system.name}}</h2>
         <p>{{{htmlHelp}}}</p>
         <h3 class="help__shortcut">Shortcuts</h3>
-        <p class="help__shortcut-list">
+        <p class="help__shortcut-list help__shortcut-list--pc">
           [1-9]: Change Brush<br>
           [↑↓ or right drag]: Change brush size<br>
           [space]: Toggle pause<br>
@@ -81,9 +81,14 @@
           [g]: Gallery<br>
           
         </p>
+        <p class="help__shortcut-list help__shortcut-list--mobile">
+          [pinch]: Change brush size<br>
+          [shake]: Clear<br>
+          [3-finger tap]: Toggle pause<br>
+          
+        </p>
         <p class="help__credit">
           created by <a href="http://baku89.com" target="_blank">baku</a>
-          
           
         </p>
       </div>

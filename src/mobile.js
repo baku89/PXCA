@@ -1,5 +1,6 @@
 import Config from './config.js'
 import EventEmitter from 'eventemitter3'
+import Shake from 'shake.js'
 
 let state = window.state
 
@@ -19,6 +20,18 @@ class Mobile extends EventEmitter {
 				this.emit('orientationchange', orientation)
 					
 			}).trigger('orientationchange')
+
+			let shakeEvent = new Shake({
+				threshold: 15,
+				timeout: 1000
+			})
+			shakeEvent.start()
+
+			let onShake = () => {
+				state.clear()
+			}
+
+			window.addEventListener('shake', onShake, false)
 
 		}
 

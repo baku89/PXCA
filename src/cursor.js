@@ -3,13 +3,13 @@ import EventEmitter from 'eventemitter3'
 import Mobile from './mobile.js'
 
 const BUTTON_RIGHT = 2
-
-const router = window.router
+const state = window.state
 
 const Mode = {
 	NONE: 0,
 	DRAW: 1,
-	SIZING: 2
+	SIZING: 2,
+	PAUSE: 3
 }
 
 export default class Cursor extends EventEmitter {
@@ -81,6 +81,12 @@ export default class Cursor extends EventEmitter {
 						true)
 				} else if (oe.touches.length == 2) {
 					this.mode = Mode.SIZING
+				} else if (oe.touches.length == 3) {
+					this.mode = Mode.PAUSE
+					this.isPauseGestureContinued = true
+					setTimeout(() => {
+						this.isPauseGestureContinued = false
+					}, 400)
 				}
 			},
 
@@ -110,6 +116,9 @@ export default class Cursor extends EventEmitter {
 
 			'touchend': (e) => {
 				e.preventDefault()
+				if (e.originalEvent.touches.length && this.isPauseGestureContinued) {
+					state.togglePause()
+				}
 				this.mode = Mode.NONE
 			}
 		})

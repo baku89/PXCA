@@ -15,10 +15,6 @@ isSupported &= (function() {
 // history
 isSupported &= !!(window.history && window.history.pushState)
 
-// webworkers
-isSupported &= !!window.Worker
-
-
 
 if (isSupported) {
 
@@ -28,6 +24,7 @@ if (isSupported) {
 
 } else {
 
-	require('./jade/_unsupported.jade')()
+	let unsupported = require('./jade/_unsupported.jade')()
+	$('.app').html(unsupported)
 
 }

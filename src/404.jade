@@ -1,0 +1,20 @@
+doctype html
+head
+	base(href='./')
+	meta(charset='utf-8')
+	meta(http-equiv='x-ua-compatible', content='ie=edge')
+	meta(name='description', content='#{description}')
+	meta(name='viewport', content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no')
+
+	title :::: N o t F o u n d ::::
+
+	//- CSS
+	link(href='http://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css')
+	link(rel="stylesheet" type="text/css" href="/style.css")
+
+	include ./jade/_ga.jade
+
+body
+	.app
+		include ./jade/_404.jade
+

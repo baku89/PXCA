@@ -15,6 +15,7 @@ export default class BasePass {
 
 		let geom = new THREE.PlaneBufferGeometry(2, 2)
 
+
 		// let geom = new THREE.BufferGeometry()
 
 		//  y

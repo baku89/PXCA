@@ -152,7 +152,10 @@ input[type=text] {
   color: #dbdbdb;
 }
 .is-hidden {
-  visibilit: hidden;
+  visibility: hidden;
+}
+[v-cloak] {
+  visibility: hidden;
 }
 .loading {
   position: absolute;
@@ -174,8 +177,8 @@ body[data-status=posting] .loading {
   visibility: visible;
 }
 .app {
-  min-width: 960px;
-  min-height: 720px;
+  width: 100%;
+  height: 100%;
 }
 .canvas {
   position: absolute;
@@ -216,13 +219,14 @@ body[data-orientation=portrait] #canvas {
   background-color: rgba(34,34,34,0.6);
   text-align: center;
   visibility: hidden;
+  cursor: pointer;
+  z-index: 100;
 }
 body[data-status=paused] .canvas__paused {
   visibility: visible;
 }
 body[data-status=paused] .canvas__paused:hover {
   background-color: rgba(219,219,219,0.4);
-  cursor: pointer !important;
 }
 .layer {
   position: absolute;
@@ -450,26 +454,45 @@ body[data-status=help] .layer--help {
   content: " ---------- ";
   letter-spacing: 0.2em;
 }
+.help__container h3 {
+  margin-top: 40px;
+}
+.help__container h3:before,
+.help__container h3:after {
+  content: " ** ";
+  letter-spacing: 0.2em;
+}
 .help__container p {
   margin-bottom: 20px;
+}
+@media only screen and (max-width: 760px) {
+  .help__container p {
+    line-height: 1.6;
+  }
 }
 .help__container span {
   display: inline-block;
   border-bottom: 2px solid #fff;
   height: 26px;
 }
-@media only screen and (max-width: 760px) {
-  .help__shortcut {
-    display: none;
-  }
-}
 .help__shortcut-list {
   width: 320px;
   margin: 0 auto 20px;
 }
+.help__shortcut-list--pc {
+  display: block;
+}
 @media only screen and (max-width: 760px) {
-  .help__shortcut-list {
+  .help__shortcut-list--pc {
     display: none;
+  }
+}
+.help__shortcut-list--mobile {
+  display: none;
+}
+@media only screen and (max-width: 760px) {
+  .help__shortcut-list--mobile {
+    display: block;
   }
 }
 .help__credit {
@@ -784,26 +807,43 @@ body[data-status=menu] .layer--menu-darken {
 .alert__tweet-link {
   font-size: 14px;
 }
-.unsupported {
-  display: none;
-  width: 320px;
-  margin: 0 auto;
-  padding-top: 100px;
+.error {
+  width: 100%;
+  height: 100%;
+  overflow: scroll;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: box;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -o-box-orient: vertical;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: center;
+  -o-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-overflow-scrolling: touch;
 }
-body[data-status=unsupported] .unsupported {
-  display: block;
-}
-.unsupported img {
-  width: 320px;
+.error img {
+  width: 100%;
+  height: auto;
   margin: 0 auto 10px;
 }
-.unsupported h3 {
+.error h3 {
   font-size: 20px;
   text-align: center;
   margin-bottom: 10px;
 }
-.unsupported p {
+.error p {
   font-size: 14px;
   text-align: center;
   margin-bottom: 10px;
+}
+.error__wrapper {
+  width: 320px;
+  margin: 0 auto;
 }

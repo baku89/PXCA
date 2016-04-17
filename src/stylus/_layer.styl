@@ -167,26 +167,40 @@
 		&:after 
 			content: " ---------- "
 			letter-spacing: .2em
+			
+	h3
+		margin-top 40px
+		
+		&:before,
+		&:after 
+			content: " ** "
+			letter-spacing: .2em
 
 	p 
 		margin-bottom: 20px
+		
+		+mobile()
+			line-height 1.6
 		
 	span 
 		display inline-block
 		border-bottom 2px solid white
 		height 26px
 
-.help__shortcut
-	+mobile()
-		display none
 
 .help__shortcut-list
 	width 320px
 	margin 0 auto 20px
-	
+
+.help__shortcut-list--pc
+	display block	
 	+mobile()
 		display none
-		
+
+.help__shortcut-list--mobile
+	display none
+	+mobile()
+		display block		
 
 .help__credit 
 	clear: both

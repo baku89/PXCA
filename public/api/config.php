@@ -11,7 +11,7 @@ $isRemote = !(substr($_SERVER['REMOTE_ADDR'], 0, 4) == '127.'
 header('Access-Control-Allow-Origin: *');
 
 // const
-define('SITEROOT', 			$isRemote ? 'http://px.baku89.com' : 'http://10.0.1.141:3000');
+define('SITEROOT', 			$isRemote ? 'http://px.baku89.com' : 'http://192.168.0.2:3000');
 define('DATA_DIR',			$_SERVER['DOCUMENT_ROOT'] . '/data');
 define('DATA_URL',			SITEROOT . '/data');
 

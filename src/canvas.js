@@ -49,10 +49,10 @@ export default class Canvas {
 		})
 
 		$('.canvas__paused').on({
-			click: () => {
+			'click touchend': () => {
 				state.resume()
 			},
-			mousedown: (e) => {
+			'mousedown touchstart': (e) => {
 				e.stopPropagation()
 			}
 		})

@@ -16,6 +16,10 @@ export default class Brush extends Vue {
 				}
 			},
 
+			ready() {
+				console.log(this)
+			},
+
 			computed: {
 				index: function() {
 					return this.brushes.list[this.brushes.active].index
